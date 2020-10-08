@@ -1,8 +1,15 @@
-package crygo
+package magma
 
 import (
 	"crypto/cipher"
 )
+
+// GOST block cipher (Magma)
+// GOST 28147-89
+
+// info:
+// https://en.wikipedia.org/wiki/GOST_(block_cipher)
+// https://uk.wikipedia.org/wiki/%D0%93%D0%9E%D0%A1%D0%A2_28147-89
 
 // Electronic Codebook - ECB
 

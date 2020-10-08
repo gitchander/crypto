@@ -1,4 +1,4 @@
-package crygo
+package magma
 
 const maxUint32 = (1 << 32) - 1 // 2 ^ 32 - 1
 

@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 
-	"github.com/gitchander/crypto/crygo"
+	"github.com/gitchander/crypto/magma"
 )
 
 var (
-	table = crygo.NewTableDefault()
+	table = magma.NewTableDefault()
 
 	key = []byte{
 		0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
@@ -23,14 +23,14 @@ func BlockExample() error {
 
 	fmt.Printf("key: [ % x ]\n", key)
 
-	blockCipher, err := crygo.NewBlockCipher(table, key)
+	blockCipher, err := magma.NewBlockCipher(table, key)
 	if err != nil {
 		return err
 	}
 
 	b1 := []byte{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08}
-	b2 := make([]byte, crygo.BlockSize)
-	b3 := make([]byte, crygo.BlockSize)
+	b2 := make([]byte, magma.BlockSize)
+	b3 := make([]byte, magma.BlockSize)
 
 	blockCipher.Encrypt(b2, b1)
 	fmt.Printf("[ % x ]\n", b2)
@@ -43,7 +43,7 @@ func BlockExample() error {
 
 func StreamExample() error {
 
-	blockCipher, err := crygo.NewBlockCipher(table, key)
+	blockCipher, err := magma.NewBlockCipher(table, key)
 	if err != nil {
 		return err
 	}
@@ -54,7 +54,7 @@ func StreamExample() error {
 
 	// Encrypt
 	{
-		se, err := crygo.NewStreamCipher(blockCipher, syn)
+		se, err := magma.NewStreamCipher(blockCipher, syn)
 		if err != nil {
 			return err
 		}
@@ -64,7 +64,7 @@ func StreamExample() error {
 
 	// Decrypt
 	{
-		sd, err := crygo.NewStreamCipher(blockCipher, syn)
+		sd, err := magma.NewStreamCipher(blockCipher, syn)
 		if err != nil {
 			return err
 		}
@@ -87,7 +87,7 @@ func StreamExample() error {
 
 func CFBExample() error {
 
-	blockCipher, err := crygo.NewBlockCipher(table, key)
+	blockCipher, err := magma.NewBlockCipher(table, key)
 	if err != nil {
 		return err
 	}
@@ -98,14 +98,14 @@ func CFBExample() error {
 
 	// Encrypt
 	{
-		e := crygo.NewCFBEncrypter(blockCipher, syn)
+		e := magma.NewCFBEncrypter(blockCipher, syn)
 
 		e.XORKeyStream(b2, b1)
 	}
 
 	// Decrypt
 	{
-		d := crygo.NewCFBDecrypter(blockCipher, syn)
+		d := magma.NewCFBDecrypter(blockCipher, syn)
 
 		d.XORKeyStream(b3[:5], b2[:5])
 		d.XORKeyStream(b3[5:9], b2[5:9])
@@ -126,12 +126,12 @@ func CFBExample() error {
 
 func HashExample() error {
 
-	blockCipher, err := crygo.NewBlockCipher(table, key)
+	blockCipher, err := magma.NewBlockCipher(table, key)
 	if err != nil {
 		return err
 	}
 
-	hash := crygo.NewHash(blockCipher)
+	hash := magma.NewHash(blockCipher)
 
 	b := []byte("中國是中國，台灣和新加坡的官方語言。世界各地的講它超過13十億人")
 	hash.Write(b)

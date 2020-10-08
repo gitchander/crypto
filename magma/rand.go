@@ -1,4 +1,4 @@
-package crygo
+package magma
 
 import (
 	"encoding/binary"

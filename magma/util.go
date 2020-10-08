@@ -1,4 +1,4 @@
-package crygo
+package magma
 
 func safeXORBytes(dst, a, b []byte) int {
 	n := len(a)

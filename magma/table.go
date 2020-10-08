@@ -1,4 +1,4 @@
-package crygo
+package magma
 
 type Table interface {
 	Replace(s0 uint32) (s1 uint32)
