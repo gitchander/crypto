@@ -6,17 +6,17 @@ import (
 )
 
 type digest struct {
-	block    cipher.Block
+	b        cipher.Block
 	out      []byte
 	src      []byte
 	srcIndex int
 }
 
-func NewHash(block cipher.Block) hash.Hash64 {
+func NewHash(b cipher.Block) hash.Hash64 {
 	return &digest{
-		block: block,
-		out:   make([]byte, block.BlockSize()),
-		src:   make([]byte, block.BlockSize()),
+		b:   b,
+		out: make([]byte, b.BlockSize()),
+		src: make([]byte, b.BlockSize()),
 	}
 }
 
@@ -25,7 +25,7 @@ func (d *digest) nextFill() {
 	safeXORBytes(d.out, d.out, d.src)
 
 	for i := 0; i < 16; i++ {
-		d.block.Encrypt(d.out, d.out)
+		d.b.Encrypt(d.out, d.out)
 	}
 
 	fillBytes(d.src, 0)
@@ -55,12 +55,12 @@ func (d *digest) Write(src []byte) (count int, err error) {
 
 func (d *digest) checkSum() []byte {
 
-	hash := make([]byte, d.block.BlockSize())
+	hash := make([]byte, d.b.BlockSize())
 
 	safeXORBytes(hash, d.out, d.src)
 
 	for i := 0; i < 16; i++ {
-		d.block.Encrypt(hash, hash)
+		d.b.Encrypt(hash, hash)
 	}
 
 	return hash
@@ -82,10 +82,10 @@ func (d *digest) Reset() {
 	d.srcIndex = 0
 }
 
-func (digest) Size() int {
-	return BlockSize
+func (d *digest) Size() int {
+	return d.b.BlockSize()
 }
 
-func (digest) BlockSize() int {
-	return BlockSize
+func (d *digest) BlockSize() int {
+	return d.b.BlockSize()
 }

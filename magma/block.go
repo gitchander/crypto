@@ -13,55 +13,73 @@ import (
 
 // Electronic Codebook - ECB
 
-type blockCipher struct {
+const (
+	blockSize = 8 // Block size in bytes.
+)
+
+const KeySize = 32 // Key size in bytes.
+
+type block struct {
+	r  replacer
 	xs [8]uint32
 	n  [2]uint32
-	t  Table
 }
 
-func NewBlockCipher(t Table, key []byte) (cipher.Block, error) {
+func NewCipher(key []byte) (cipher.Block, error) {
+	return NewCipherRT(RT1, key)
+}
+
+func NewCipherRT(rt ReplaceTable, key []byte) (cipher.Block, error) {
+
+	err := checkValidReplaceTable(rt)
+	if err != nil {
+		return nil, err
+	}
 
 	if len(key) != KeySize {
 		return nil, ErrorKeyLen
 	}
 
-	bc := &blockCipher{t: t}
-
-	xs := bc.xs[:8]
+	var xs [8]uint32
 	for i := range xs {
 		xs[i] = byteOrder.Uint32(key)
 		key = key[4:]
 	}
 
-	return bc, nil
+	b := &block{
+		r:  makeReplacer(rt),
+		xs: xs,
+	}
+
+	return b, nil
 }
 
-func (blockCipher) BlockSize() int {
-	return BlockSize
+func (block) BlockSize() int {
+	return blockSize
 }
 
-func (bc *blockCipher) Encrypt(dst, src []byte) {
+func (b *block) Encrypt(dst, src []byte) {
 
-	if len(src) < BlockSize {
-		panic("crygo: input not full block")
+	if len(src) < blockSize {
+		panic("magma: input not full block")
 	}
 
-	if len(dst) < BlockSize {
-		panic("crygo: output not full block")
+	if len(dst) < blockSize {
+		panic("magma: output not full block")
 	}
 
-	encryptBlock(bc.xs[:8], bc.t, bc.n[:2], dst, src)
+	encryptBlock(b.r, &(b.n), &(b.xs), dst, src)
 }
 
-func (bc *blockCipher) Decrypt(dst, src []byte) {
+func (b *block) Decrypt(dst, src []byte) {
 
-	if len(src) < BlockSize {
-		panic("crygo: input not full block")
+	if len(src) < blockSize {
+		panic("magma: input not full block")
 	}
 
-	if len(dst) < BlockSize {
-		panic("crygo: output not full block")
+	if len(dst) < blockSize {
+		panic("magma: output not full block")
 	}
 
-	decryptBlock(bc.xs[:8], bc.t, bc.n[:2], dst, src)
+	decryptBlock(b.r, &(b.n), &(b.xs), dst, src)
 }

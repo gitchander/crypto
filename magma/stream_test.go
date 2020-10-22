@@ -14,13 +14,7 @@ func TestStream(t *testing.T) {
 		0xd9, 0xda, 0xdb, 0xdc, 0xdd, 0xde, 0xdf, 0x01,
 	}
 
-	table, err := NewTable(table1)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	block, err := NewBlockCipher(table, key)
+	b, err := NewCipher(key)
 	if err != nil {
 		t.Error(err)
 		return
@@ -47,7 +41,7 @@ func TestStream(t *testing.T) {
 
 		// Encrypt
 		{
-			sc, err := NewStreamCipher(block, syn)
+			sc, err := NewStreamCipher(b, syn)
 			if err != nil {
 				t.Error(err)
 				return
@@ -58,7 +52,7 @@ func TestStream(t *testing.T) {
 
 		// Decrypt
 		{
-			sc, err := NewStreamCipher(block, syn)
+			sc, err := NewStreamCipher(b, syn)
 			if err != nil {
 				t.Error(err)
 				return

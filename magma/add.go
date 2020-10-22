@@ -21,7 +21,7 @@ func add_mod32_v3(a, b uint32) uint32 {
 		B = int64(b)
 		C = int64(1 << 32) // 2^32
 	)
-	return uint32(mod(A+B, C))
+	return uint32(modInt64(A+B, C))
 }
 
 // (a + b) mod (2^32 - 1)*
@@ -48,5 +48,5 @@ func add_mod32m1_wrong(a, b uint32) uint32 {
 		B = int64(b)
 		C = int64((1 << 32) - 1) // (2^32 - 1)
 	)
-	return uint32(mod(A+B-1, C) + 1)
+	return uint32(modInt64(A+B-1, C) + 1)
 }

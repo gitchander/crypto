@@ -6,7 +6,7 @@ import (
 )
 
 func newError(m string) error {
-	return errors.New(fmt.Sprintf("crygo.%s", m))
+	return errors.New(fmt.Sprintf("magma: %s", m))
 }
 
 func newErrorf(format string, a ...interface{}) error {
@@ -17,6 +17,6 @@ var (
 	ErrorSynLen = newError("wrong syn len")
 	ErrorKeyLen = newError("wrong key len")
 
-	ErrorTableLen    = newError("wrong table len")
-	ErrorTableStruct = newError("wrong table struct")
+	ErrorTableLen          = newError("wrong table len")
+	ErrInvalidReplaceTable = newError("invalid replace table")
 )

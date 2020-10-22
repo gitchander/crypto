@@ -11,7 +11,7 @@ func safeXORBytes(dst, a, b []byte) int {
 	return n
 }
 
-func duplicateBytes(a []byte) []byte {
+func cloneBytes(a []byte) []byte {
 	b := make([]byte, len(a))
 	copy(b, a)
 	return b
@@ -23,13 +23,13 @@ func fillBytes(bs []byte, b byte) {
 	}
 }
 
-func quoRem(x, y int) (q, r int) {
-	q = x / y
-	r = x - q*y
+func quoRem(x, y int) (quo, rem int) {
+	quo = x / y
+	rem = x % y
 	return
 }
 
-func mod(x, y int64) int64 {
+func modInt64(x, y int64) int64 {
 	t := x % y
 	if t < 0 {
 		t += y

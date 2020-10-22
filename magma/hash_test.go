@@ -8,6 +8,8 @@ import (
 
 func TestHash(t *testing.T) {
 
+	rt := RT2
+
 	key := []byte{
 		0x81, 0x82, 0x83, 0x84, 0x85, 0xB6, 0x87, 0xCC,
 		0x89, 0x8a, 0x11, 0x8c, 0x8d, 0x8e, 0x8f, 0x80,
@@ -15,25 +17,19 @@ func TestHash(t *testing.T) {
 		0xd9, 0xda, 0xdb, 0xdc, 0xdd, 0xde, 0xdf, 0x01,
 	}
 
-	table, err := NewTable(table2)
+	b, err := NewCipherRT(rt, key)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
-	block, err := NewBlockCipher(table, key)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	h := NewHash(block)
+	h := NewHash(b)
 
 	r := newRand()
 
 	for i := 0; i < 1000; i++ {
 
-		src, h1 := hashSample(block, r)
+		src, h1 := hashSample(b, r)
 
 		h.Reset()
 		h.Write(src)
@@ -46,14 +42,16 @@ func TestHash(t *testing.T) {
 	}
 }
 
-func hashSample(block cipher.Block, r randomer) (src, hash []byte) {
+func hashSample(b cipher.Block, r randomer) (src, hash []byte) {
+
+	blockSize := b.BlockSize()
 
 	var fullBlocks = func(x int) int {
-		n := x / BlockSize
-		if x > n*BlockSize {
+		n := x / blockSize
+		if x > n*blockSize {
 			n++
 		}
-		return n * BlockSize
+		return n * blockSize
 	}
 
 	const n = 1000
@@ -63,17 +61,17 @@ func hashSample(block cipher.Block, r randomer) (src, hash []byte) {
 	r.FillBytes(bs[:m])
 	src = bs[:m]
 
-	hash = make([]byte, BlockSize)
+	hash = make([]byte, blockSize)
 
 	for len(bs) > 0 {
 
-		safeXORBytes(hash, hash[:BlockSize], bs[:BlockSize])
+		safeXORBytes(hash, hash[:blockSize], bs[:blockSize])
 
 		for i := 0; i < 16; i++ {
-			block.Encrypt(hash, hash)
+			b.Encrypt(hash, hash)
 		}
 
-		bs = bs[BlockSize:]
+		bs = bs[blockSize:]
 	}
 
 	return

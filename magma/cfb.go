@@ -4,35 +4,35 @@ import "crypto/cipher"
 
 // CFB - Cipher Feedback Mode
 
-func NewCFBEncrypter(block cipher.Block, syn []byte) cipher.Stream {
-	return newCFBCipher(block, syn, false)
+func NewCFBEncrypter(b cipher.Block, syn []byte) cipher.Stream {
+	return newCFBCipher(b, syn, false)
 }
 
-func NewCFBDecrypter(block cipher.Block, syn []byte) cipher.Stream {
-	return newCFBCipher(block, syn, true)
+func NewCFBDecrypter(b cipher.Block, syn []byte) cipher.Stream {
+	return newCFBCipher(b, syn, true)
 }
 
 type cfb struct {
-	block    cipher.Block
+	b        cipher.Block
 	out      []byte
 	outIndex int
 
 	decrypt bool
 }
 
-func newCFBCipher(block cipher.Block, syn []byte, decrypt bool) cipher.Stream {
+func newCFBCipher(b cipher.Block, syn []byte, decrypt bool) cipher.Stream {
 
-	blockSize := block.BlockSize()
+	blockSize := b.BlockSize()
 
 	if len(syn) != blockSize {
-		panic("crygo.newCFBCipher: SYN length must equal block size")
+		panic("magma.newCFBCipher: SYN length must equal block size")
 	}
 
 	out := make([]byte, blockSize)
 	copy(out, syn)
 
 	return &cfb{
-		block:    block,
+		b:        b,
 		out:      out,
 		outIndex: blockSize,
 		decrypt:  decrypt,
@@ -44,7 +44,7 @@ func (p *cfb) XORKeyStream(dst, src []byte) {
 	for len(src) > 0 {
 
 		if p.outIndex >= len(p.out) {
-			p.block.Encrypt(p.out, p.out)
+			p.b.Encrypt(p.out, p.out)
 			p.outIndex = 0
 		}
 

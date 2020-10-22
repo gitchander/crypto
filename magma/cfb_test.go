@@ -19,16 +19,14 @@ func TestEncrypter(t *testing.T) {
 		syn = []byte{0x12, 0xA9, 0x1C, 0x11, 0x73, 0xBB, 0xF4, 0x1D}
 	)
 
-	table := NewTableDefault()
-
-	block, err := NewBlockCipher(table, key)
+	b, err := NewCipher(key)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
-	cfb1 := NewCFBEncrypter(block, syn)
-	cfb2 := cipher.NewCFBEncrypter(block, syn)
+	cfb1 := NewCFBEncrypter(b, syn)
+	cfb2 := cipher.NewCFBEncrypter(b, syn)
 
 	r := newRandSeed(10)
 
@@ -59,6 +57,8 @@ func TestEncrypter(t *testing.T) {
 
 func TestCFB(t *testing.T) {
 
+	table := RT2
+
 	key := []byte{
 		0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88,
 		0x89, 0x8a, 0x11, 0x8c, 0x8d, 0x8e, 0x8f, 0x80,
@@ -66,13 +66,7 @@ func TestCFB(t *testing.T) {
 		0xd9, 0xda, 0xdb, 0xdc, 0xdd, 0xde, 0xdf, 0x01,
 	}
 
-	table, err := NewTable(table2)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	block, err := NewBlockCipher(table, key)
+	b, err := NewCipherRT(table, key)
 	if err != nil {
 		t.Error(err)
 		return
@@ -99,13 +93,13 @@ func TestCFB(t *testing.T) {
 
 		// Encrypt
 		{
-			e := NewCFBEncrypter(block, syn)
+			e := NewCFBEncrypter(b, syn)
 			e.XORKeyStream(s2, s1)
 		}
 
 		// Decrypt
 		{
-			d := NewCFBDecrypter(block, syn)
+			d := NewCFBDecrypter(b, syn)
 			d.XORKeyStream(s3, s2)
 		}
 
