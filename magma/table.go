@@ -1,5 +1,8 @@
 package magma
 
+// S-box (substitution-box)
+// https://en.wikipedia.org/wiki/S-box
+
 type ReplaceTable [8][16]byte
 
 var RT1 = ReplaceTable{
