@@ -28,7 +28,7 @@ func NewCipherMagmaSBox(key []byte, sbox SBoxMagma) (cipher.Block, error) {
 		we: we,
 		ks: ks,
 		rb: new(roundBlock),
-		f:  roundFuncMagma(&sbox),
+		rf: roundFuncMagma(&sbox),
 	}
 
 	return block, nil

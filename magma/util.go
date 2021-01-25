@@ -18,7 +18,7 @@ func cloneBytes(a []byte) []byte {
 }
 
 func fillBytes(bs []byte, b byte) {
-	for i, _ := range bs {
+	for i := range bs {
 		bs[i] = b
 	}
 }

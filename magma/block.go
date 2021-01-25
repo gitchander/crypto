@@ -20,9 +20,10 @@ const (
 const KeySize = 32 // Key size in bytes.
 
 type block struct {
-	r  replacer
-	xs [8]uint32
-	n  [2]uint32
+	we *wordEncoder
+	ks []word
+	rb *roundBlock
+	rf roundFunc
 }
 
 func NewCipher(key []byte) (cipher.Block, error) {
@@ -36,22 +37,66 @@ func NewCipherRT(rt ReplaceTable, key []byte) (cipher.Block, error) {
 		return nil, err
 	}
 
+	we := newWordEncoder()
+
+	ks, err := expandKeyMagma(key, we)
+	if err != nil {
+		return nil, err
+	}
+
+	b := &block{
+		we: we,
+		ks: ks,
+		rb: new(roundBlock),
+		rf: roundFuncMagma(&rt),
+	}
+
+	return b, nil
+}
+
+func expandKeyMagma(key []byte, we *wordEncoder) ([]word, error) {
+
 	if len(key) != KeySize {
 		return nil, ErrorKeyLen
 	}
 
-	var xs [8]uint32
+	var xs [8]word
 	for i := range xs {
-		xs[i] = byteOrder.Uint32(key)
+		xs[i] = we.getWord(key)
 		key = key[4:]
 	}
 
-	b := &block{
-		r:  makeReplacer(rt),
-		xs: xs,
+	var ks []word
+
+	for j := 0; j < 3; j++ {
+		for i := 0; i < 8; i++ {
+			ks = append(ks, xs[i])
+		}
+	}
+	for i := 8; i > 0; i-- {
+		ks = append(ks, xs[i-1])
 	}
 
-	return b, nil
+	return ks, nil
+}
+
+func roundFuncMagma(rt *ReplaceTable) roundFunc {
+	return func(k, r word) word {
+		s := k + r
+		s = substituteMagma(rt, s)
+		return shiftWord11(s)
+	}
+}
+
+func substituteMagma(rt *ReplaceTable, s0 word) (s1 word) {
+	for i := 0; i < 8; i++ {
+		var (
+			shift = 4 * i
+			j     = ((s0 >> shift) & 0xF)
+		)
+		s1 |= word(rt[i][j]) << shift
+	}
+	return s1
 }
 
 func (block) BlockSize() int {
@@ -68,7 +113,9 @@ func (b *block) Encrypt(dst, src []byte) {
 		panic("magma: output not full block")
 	}
 
-	encryptBlock(b.r, &(b.n), &(b.xs), dst, src)
+	writeBlock(b.rb, b.we, src)
+	encrypt(b.rb, b.ks, b.rf)
+	readBlock(b.rb, b.we, dst)
 }
 
 func (b *block) Decrypt(dst, src []byte) {
@@ -81,5 +128,7 @@ func (b *block) Decrypt(dst, src []byte) {
 		panic("magma: output not full block")
 	}
 
-	decryptBlock(b.r, &(b.n), &(b.xs), dst, src)
+	writeBlock(b.rb, b.we, src)
+	decrypt(b.rb, b.ks, b.rf)
+	readBlock(b.rb, b.we, dst)
 }

@@ -13,7 +13,7 @@ type blockCipher struct {
 	we *wordEncoder
 	ks []Word
 	rb *roundBlock
-	f  RoundFunc
+	rf RoundFunc
 }
 
 func newBlockCipher(key []byte) (cipher.Block, error) {
@@ -29,7 +29,7 @@ func newBlockCipher(key []byte) (cipher.Block, error) {
 		we: we,
 		ks: ks,
 		rb: new(roundBlock),
-		f:  RoundFuncXOR,
+		rf: RoundFuncXOR,
 	}
 
 	return block, nil
@@ -59,7 +59,7 @@ func (p *blockCipher) Encrypt(dst, src []byte) {
 	}
 
 	writeBlock(p.rb, p.we, src)
-	encrypt(p.rb, p.ks, p.f)
+	encrypt(p.rb, p.ks, p.rf)
 	readBlock(p.rb, p.we, dst)
 }
 
@@ -71,6 +71,6 @@ func (p *blockCipher) Decrypt(dst, src []byte) {
 	}
 
 	writeBlock(p.rb, p.we, src)
-	decrypt(p.rb, p.ks, p.f)
+	decrypt(p.rb, p.ks, p.rf)
 	readBlock(p.rb, p.we, dst)
 }
