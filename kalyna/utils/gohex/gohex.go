@@ -1,25 +1,8 @@
 package gohex
 
 import (
-	// "encoding/hex"
-	// "fmt"
 	"strings"
 )
-
-// func printState(prefix string, state []uint64) {
-// 	v := wordsToString(state)
-// 	fmt.Printf("%s %q\n", prefix, v)
-// }
-
-// func wordsToString(ws []uint64) string {
-// 	bs := makeBytesForWords(ws)
-// 	wordsToBytes(ws, bs)
-// 	var br strings.Builder
-// 	for _, b := range bs {
-// 		br.WriteString(byteToString(b))
-// 	}
-// 	return br.String()
-// }
 
 func writeHexByte(br *strings.Builder, b byte) {
 
@@ -51,13 +34,15 @@ func byteToString(b byte) string {
 }
 
 func byteToNibbles(b byte) (lo, hi byte) {
-	lo = b & 0xF
-	hi = b >> 4
+	hi = (b >> 4)
+	lo = (b & 0xF)
 	return
 }
 
-func nibblesToByte(lo, hi byte) byte {
-	return (hi << 4) | (lo & 0xF)
+func nibblesToByte(lo, hi byte) (b byte) {
+	b |= (hi << 4)
+	b |= (lo & 0xF)
+	return b
 }
 
 func nibbleToHex(n byte, upper bool) (byte, bool) {

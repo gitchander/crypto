@@ -53,7 +53,7 @@ func checkValidReplaceTable(rt ReplaceTable) error {
 
 		for j := 0; j < 16; j++ {
 			b := bs[j]
-			if (b >= 0) && (b < 16) {
+			if (0 <= b) && (b < 16) {
 				x[b]++
 			} else {
 				return ErrInvalidReplaceTable

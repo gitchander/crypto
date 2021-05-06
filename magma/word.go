@@ -8,14 +8,15 @@ const bytesPerWord = 4
 
 type word uint32
 
-func xor(a, b word) word {
+func wordXOR(a, b word) word {
 	return a ^ b
 }
 
-func shiftWord11(s word) word {
-	return (s << 11) | (s >> 21)
+func wordShift11(w word) word {
+	return (w << 11) | (w >> 21)
 }
 
+//------------------------------------------------------------------------------
 // byteOrder
 type wordEncoder struct {
 	byteOrder binary.ByteOrder

@@ -3,10 +3,10 @@ package kalyna
 import (
 	"bytes"
 	"errors"
-	"math/rand"
 	"sync"
 	"testing"
-	"time"
+
+	"github.com/gitchander/crypto/utils/random"
 )
 
 var configs = []Config{
@@ -33,7 +33,7 @@ var configs = []Config{
 }
 
 func TestRandCiphers(t *testing.T) {
-	r := newRandNow()
+	r := random.NewRandNow()
 	for i := 0; i < 10; i++ {
 		var (
 			seed   = r.Int63()
@@ -47,7 +47,7 @@ func TestRandCiphers(t *testing.T) {
 }
 
 func TestRandCiphersSync(t *testing.T) {
-	r := newRandNow()
+	r := random.NewRandNow()
 	const n = 100
 	var wg sync.WaitGroup
 	wg.Add(n)
@@ -67,27 +67,13 @@ func TestRandCiphersSync(t *testing.T) {
 	wg.Wait()
 }
 
-func newRandSeed(seed int64) *rand.Rand {
-	return rand.New(rand.NewSource(seed))
-}
-
-func newRandNow() *rand.Rand {
-	return newRandSeed(time.Now().UnixNano())
-}
-
-func randFillBytes(r *rand.Rand, bs []byte) {
-	for i := range bs {
-		bs[i] = byte(r.Intn(256))
-	}
-}
-
 func testSeedConfig(seed int64, c Config) error {
 
-	r := newRandSeed(seed)
+	r := random.NewRandSeed(seed)
 
 	keySize := c.KeySize / bitsPerByte
 	key := make([]byte, keySize)
-	randFillBytes(r, key)
+	random.FillBytes(r, key)
 
 	b, err := c.NewCipher(key)
 	if err != nil {
@@ -105,7 +91,7 @@ func testSeedConfig(seed int64, c Config) error {
 
 	for i := 0; i < 20; i++ {
 
-		randFillBytes(r, plaintext)
+		random.FillBytes(r, plaintext)
 
 		b.Encrypt(ciphertext, plaintext)
 		b.Decrypt(plaintextResult, ciphertext)

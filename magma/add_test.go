@@ -2,11 +2,13 @@ package magma
 
 import (
 	"testing"
+
+	"github.com/gitchander/crypto/utils/random"
 )
 
 func TestAddMod32(t *testing.T) {
 
-	r := newRand()
+	r := random.NewRandNow()
 
 	for i := 0; i < 1000000; i++ {
 
@@ -43,7 +45,7 @@ func addMod32Test(a, b uint32) error {
 
 func TestAddMod32M1(t *testing.T) {
 
-	r := newRand()
+	r := random.NewRandNow()
 
 	for i := 0; i < 1000000; i++ {
 

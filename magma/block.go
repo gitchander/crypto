@@ -84,7 +84,7 @@ func roundFuncMagma(rt *ReplaceTable) roundFunc {
 	return func(k, r word) word {
 		s := k + r
 		s = substituteMagma(rt, s)
-		return shiftWord11(s)
+		return wordShift11(s)
 	}
 }
 

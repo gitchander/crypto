@@ -3,7 +3,10 @@ package magma
 import (
 	"bytes"
 	"crypto/cipher"
+	"math/rand"
 	"testing"
+
+	"github.com/gitchander/crypto/utils/random"
 )
 
 func TestHash(t *testing.T) {
@@ -25,7 +28,7 @@ func TestHash(t *testing.T) {
 
 	h := NewHash(b)
 
-	r := newRand()
+	r := random.NewRandNow()
 
 	for i := 0; i < 1000; i++ {
 
@@ -42,7 +45,7 @@ func TestHash(t *testing.T) {
 	}
 }
 
-func hashSample(b cipher.Block, r randomer) (src, hash []byte) {
+func hashSample(b cipher.Block, r *rand.Rand) (src, hash []byte) {
 
 	blockSize := b.BlockSize()
 
@@ -58,7 +61,7 @@ func hashSample(b cipher.Block, r randomer) (src, hash []byte) {
 	m := r.Intn(n) + 1
 
 	bs := make([]byte, fullBlocks(m))
-	r.FillBytes(bs[:m])
+	random.FillBytes(r, bs[:m])
 	src = bs[:m]
 
 	hash = make([]byte, blockSize)

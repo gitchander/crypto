@@ -3,17 +3,19 @@ package magma
 import (
 	"bytes"
 	"testing"
+
+	"github.com/gitchander/crypto/utils/random"
 )
 
 func TestCipherRand(t *testing.T) {
 
-	r := newRand()
+	r := random.NewRandNow()
 
 	key := make([]byte, KeySize)
 
 	for i := 0; i < 100; i++ {
 
-		r.FillBytes(key)
+		random.FillBytes(r, key)
 
 		b, err := NewCipher(key)
 		if err != nil {
@@ -29,7 +31,7 @@ func TestCipherRand(t *testing.T) {
 
 		for j := 0; j < 1000; j++ {
 
-			r.FillBytes(plaintext)
+			random.FillBytes(r, plaintext)
 
 			b.Encrypt(ciphertext, plaintext)
 			if bytes.Compare(plaintext, ciphertext) == 0 {
@@ -101,7 +103,7 @@ func TestSamples(t *testing.T) {
 
 func TestTables(t *testing.T) {
 
-	r := newRand()
+	r := random.NewRandNow()
 
 	type Replacers struct {
 		r1 replacer

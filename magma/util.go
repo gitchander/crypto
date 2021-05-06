@@ -30,9 +30,9 @@ func quoRem(x, y int) (quo, rem int) {
 }
 
 func modInt64(x, y int64) int64 {
-	t := x % y
-	if t < 0 {
-		t += y
+	m := x % y
+	if m < 0 {
+		m += y
 	}
-	return t
+	return m
 }

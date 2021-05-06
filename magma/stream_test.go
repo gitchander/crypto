@@ -3,6 +3,8 @@ package magma
 import (
 	"bytes"
 	"testing"
+
+	"github.com/gitchander/crypto/utils/random"
 )
 
 func TestStream(t *testing.T) {
@@ -22,7 +24,7 @@ func TestStream(t *testing.T) {
 
 	syn := []byte{0xA1, 0x09, 0xDC, 0x11, 0x73, 0x17, 0x04, 0x13}
 
-	r := newRand()
+	r := random.NewRandNow()
 
 	const n = 1000
 
@@ -37,7 +39,7 @@ func TestStream(t *testing.T) {
 		s2 = s2[:m]
 		s3 = s3[:m]
 
-		r.FillBytes(s1)
+		random.FillBytes(r, s1)
 
 		// Encrypt
 		{

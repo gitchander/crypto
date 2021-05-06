@@ -1,5 +1,8 @@
 package magma
 
+// Feistel cipher:
+// https://en.wikipedia.org/wiki/Feistel_cipher
+
 type roundBlock struct {
 	L, R word
 }
@@ -22,7 +25,7 @@ func readBlock(p *roundBlock, we *wordEncoder, data []byte) {
 type roundFunc func(k, r word) word
 
 func round(b *roundBlock, k word, rf roundFunc) {
-	b.L = xor(b.L, rf(k, b.R))
+	b.L = wordXOR(b.L, rf(k, b.R))
 	b.Swap()
 }
 

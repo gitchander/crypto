@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"crypto/cipher"
 	"testing"
+
+	"github.com/gitchander/crypto/utils/random"
 )
 
 func TestEncrypter(t *testing.T) {
@@ -28,7 +30,7 @@ func TestEncrypter(t *testing.T) {
 	cfb1 := NewCFBEncrypter(b, syn)
 	cfb2 := cipher.NewCFBEncrypter(b, syn)
 
-	r := newRandSeed(10)
+	r := random.NewRandSeed(10)
 
 	const n = 1000
 
@@ -43,7 +45,7 @@ func TestEncrypter(t *testing.T) {
 		s2 = s2[:m]
 		s3 = s3[:m]
 
-		r.FillBytes(s1)
+		random.FillBytes(r, s1)
 
 		cfb1.XORKeyStream(s2, s1)
 		cfb2.XORKeyStream(s3, s1)
@@ -74,7 +76,7 @@ func TestCFB(t *testing.T) {
 
 	syn := []byte{0xF1, 0x09, 0xAC, 0x11, 0x73, 0xB8, 0x04, 0x13}
 
-	r := newRand()
+	r := random.NewRandNow()
 
 	const n = 1000
 
@@ -89,7 +91,7 @@ func TestCFB(t *testing.T) {
 		s2 = s2[:m]
 		s3 = s3[:m]
 
-		r.FillBytes(s1)
+		random.FillBytes(r, s1)
 
 		// Encrypt
 		{
