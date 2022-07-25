@@ -7,20 +7,15 @@ import (
 )
 
 type Config struct {
-	// Plug board settings:
-	Plugboard string // PO ML IU KJ NH YT GB VF RE DC
-
-	Rotors []RotorInfo
-
-	Reflector ReflectorConfig
+	Plugboard   string      `json:"plugboard,omitempty"`
+	Rotors      []RotorInfo `json:"rotors"`
+	ReflectorID string      `json:"reflector-id"`
 }
 
 type Enigma struct {
 	plugboard *Plugboard
 	rotors    []*Rotor
 	reflector *Reflector
-
-	cs []*converter
 }
 
 func New(c Config) (*Enigma, error) {
@@ -39,7 +34,7 @@ func New(c Config) (*Enigma, error) {
 		rotors[i] = r
 	}
 
-	reflector, err := NewReflector(c.Reflector)
+	reflector, err := NewReflectorByID(c.ReflectorID)
 	if err != nil {
 		return nil, err
 	}
@@ -49,9 +44,6 @@ func New(c Config) (*Enigma, error) {
 		rotors:    rotors,
 		reflector: reflector,
 	}
-
-	e.cs = e.makeConverters()
-
 	return e, nil
 }
 
@@ -59,58 +51,14 @@ func (e *Enigma) rotate() {
 	rotateRotors(e.rotors)
 }
 
-func (e *Enigma) makeConverters() []*converter {
-
-	var cs []*converter
-
-	cs = append(cs, newConverter("plugboard-direct", e.plugboard.Direct))
-
-	n := len(e.rotors)
-	for i := n - 1; i >= 0; i-- {
-		var (
-			r         = e.rotors[i]
-			rotorName = makeRotorName(i, "direct")
-			c         = newConverter(rotorName, r.Direct)
-		)
-		cs = append(cs, c)
-	}
-
-	cs = append(cs, newConverter("reflector", e.reflector.Direct))
-
-	for i := 0; i < n; i++ {
-		var (
-			r         = e.rotors[i]
-			rotorName = makeRotorName(i, "reverse")
-			c         = newConverter(rotorName, r.Reverse)
-		)
-		cs = append(cs, c)
-	}
-
-	cs = append(cs, newConverter("plugboard-reverse", e.plugboard.Reverse))
-
-	return cs
-}
-
 func makeRotorName(i int, suffix string) string {
 	return fmt.Sprintf("rotor[%d]-%s", i, suffix)
-}
-
-func (e *Enigma) doConverters(index int) int {
-	for _, c := range e.cs {
-		index = c.Do(index)
-	}
-	return index
 }
 
 func (e *Enigma) feed(index int) int {
 
 	e.rotate()
 
-	if false {
-		return e.doConverters(index)
-	}
-
-	//--------------------------------------------------------------------------
 	index = e.plugboard.Direct(index)
 
 	n := len(e.rotors)

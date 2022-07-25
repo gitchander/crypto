@@ -1,18 +1,7 @@
 package enigma
 
-var (
-	ReflectorA = ReflectorConfig{
-		Name:   "Reflector A",
-		Wiring: "EJMZALYXVBWFCRQUONTSPIKHGD",
-	}
-	ReflectorB = ReflectorConfig{
-		Name:   "Reflector B",
-		Wiring: "YRUHQSLDPXNGOKMIEBFZCWVJAT",
-	}
-	ReflectorC = ReflectorConfig{
-		Name:   "Reflector C",
-		Wiring: "FVPJIAOYEDRZXWGCTKUQSBNMHL",
-	}
+import (
+	"fmt"
 )
 
 type ReflectorConfig struct {
@@ -30,6 +19,14 @@ func NewReflector(rc ReflectorConfig) (*Reflector, error) {
 		return nil, err
 	}
 	return &Reflector{direct: dr.direct}, nil
+}
+
+func NewReflectorByID(id string) (*Reflector, error) {
+	rc, ok := reflectors[id]
+	if !ok {
+		return nil, fmt.Errorf("invalid reflector id %q", id)
+	}
+	return NewReflector(rc)
 }
 
 func (r *Reflector) Direct(index int) int {

@@ -15,6 +15,7 @@ func NewPlugboard(s string) (*Plugboard, error) {
 
 // example: "AV BS CG DL FU HZ IN KM OW RX"
 func parsePlugboard(s string) (*Plugboard, error) {
+
 	var dr dirRev
 	for i := 0; i < nodes; i++ {
 		dr.direct[i] = i
@@ -23,6 +24,9 @@ func parsePlugboard(s string) (*Plugboard, error) {
 	if s == "" {
 		return &Plugboard{dr}, nil
 	}
+
+	uniqueMap := make(map[byte]struct{})
+
 	vs := strings.Split(s, " ")
 	xs := make([]int, 2)
 	for _, pair := range vs {
@@ -30,10 +34,21 @@ func parsePlugboard(s string) (*Plugboard, error) {
 		if err != nil {
 			return nil, fmt.Errorf("invalid plugboard letters: %s", err)
 		}
+
+		// Check duplicates:
+		for _, r := range pair {
+			b := byte(r)
+			if _, ok := uniqueMap[b]; ok {
+				return nil, fmt.Errorf("plugboard has duplicate of char %q", b)
+			}
+			uniqueMap[b] = struct{}{}
+		}
+
 		var (
 			a = xs[0]
 			b = xs[1]
 		)
+
 		dr.direct[a] = b
 		dr.direct[b] = a
 

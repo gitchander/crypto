@@ -5,15 +5,15 @@ import (
 )
 
 type RotorInfo struct {
-	ID string
+	ID string `json:"id"`
 
 	// Ring settings
 	// ['A'..'Z']
-	Ring byte
+	Ring string `json:"ring"`
 
 	// Initial position
 	// ['A'..'Z']
-	Position byte
+	Position string `json:"position"`
 }
 
 func NewRotorByInfo(ri RotorInfo) (*Rotor, error) {
@@ -28,28 +28,20 @@ func NewRotorByInfo(ri RotorInfo) (*Rotor, error) {
 	}
 
 	//--------------------------------------------------------------------------
-	// Parse ring
-	ring, ok := letterToIndex(ri.Ring)
-	if !ok {
-		return nil, fmt.Errorf("invalid ring %#U", ri.Ring)
+	// Parse ring:
+	ring, err := parseIndex(ri.Ring)
+	if err != nil {
+		return nil, fmt.Errorf("parse ring: %s", err)
 	}
 	r.SetRing(ring)
 
 	//--------------------------------------------------------------------------
-	// Parse position
-	position, ok := letterToIndex(ri.Position)
-	if !ok {
-		return nil, fmt.Errorf("invalid position %#U", ri.Position)
+	// Parse position:
+	position, err := parseIndex(ri.Position)
+	if err != nil {
+		return nil, fmt.Errorf("parse position: %s", err)
 	}
 	r.SetPosition(position)
 
 	return r, nil
-}
-
-func parseIndex(b byte) (int, error) {
-	index, ok := letterToIndex(b)
-	if !ok {
-		return 0, errInvalidLetter(b)
-	}
-	return index, nil
 }

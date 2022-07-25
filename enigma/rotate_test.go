@@ -71,21 +71,21 @@ func TestRotate(t *testing.T) {
 		Rotors: []RotorInfo{
 			{
 				ID:       "I",
-				Ring:     'A',
-				Position: 'A',
+				Ring:     "A",
+				Position: "A",
 			},
 			{
 				ID:       "II",
-				Ring:     'A',
-				Position: 'A',
+				Ring:     "A",
+				Position: "A",
 			},
 			{
 				ID:       "III",
-				Ring:     'A',
-				Position: 'A',
+				Ring:     "A",
+				Position: "A",
 			},
 		},
-		Reflector: ReflectorB,
+		ReflectorID: "B",
 	}
 	e, err := New(c)
 	if err != nil {

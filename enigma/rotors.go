@@ -1,24 +1,5 @@
 package enigma
 
-// +---+----+-----+----+---+-----+-----+------+
-// | I | II | III | IV | V | VI  | VII | VIII |
-// +---+----+-----+----+---+-----+-----+------+
-// | Q | E  | V   | J  | Z | Z,M | Z,M | Z,M  |
-// +---+----+-----+----+---+-----+-----+------+
-
-// let id       = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-// let rotorI   = "EKMFLGDQVZNTOWYHXUSPAIBRCJ"
-// let rotorII  = "AJDKSIRUXBLHWTMCQGZNPYFVOE"
-// let rotorIII = "BDFHJLCPRTXVZNYEIWGAKMUSQO"
-// *NewRotor("EKMFLGDQVZNTOWYHXUSPAIBRCJ", "I", "Q"),
-// *NewRotor("AJDKSIRUXBLHWTMCQGZNPYFVOE", "II", "E"),
-// *NewRotor("BDFHJLCPRTXVZNYEIWGAKMUSQO", "III", "V"),
-// *NewRotor("ESOVPZJAYQUIRHXLNFTGKDCMWB", "IV", "J"),
-// *NewRotor("VZBRGITYUPSDNHLXAWMJQOFECK", "V", "Z"),
-// *NewRotor("JPGVOUMFYQBENHZRDKASXLICTW", "VI", "ZM"),
-// *NewRotor("NZJHGRCXMYSWBOUFAIVLPEKQDT", "VII", "ZM"),
-// *NewRotor("FKQHTLXOCBJSPDZRAMEWNIUYGV", "VIII", "ZM"),
-
 var defaultRotors = map[string]RotorConfig{
 	"I": RotorConfig{
 		Name:      "Rotor I",

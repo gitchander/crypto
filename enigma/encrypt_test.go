@@ -4,40 +4,40 @@ import (
 	"testing"
 )
 
-type CryptoPair struct {
+type TestPair struct {
 	Plaintext  string
 	Ciphertext string
 }
 
-type Sample struct {
+type TestSample struct {
 	Config Config
-	Pairs  []CryptoPair
+	Pairs  []TestPair
 }
 
-var samples = []Sample{
+var samples = []TestSample{
 	{
 		Config: Config{
 			Plugboard: "BQ CR DI EJ KW MT OS PX UZ GH",
 			Rotors: []RotorInfo{
 				{
 					ID:       "I",
-					Ring:     'A',
-					Position: 'A',
+					Ring:     "A",
+					Position: "A",
 				},
 				{
 					ID:       "II",
-					Ring:     'A',
-					Position: 'A',
+					Ring:     "A",
+					Position: "A",
 				},
 				{
 					ID:       "III",
-					Ring:     'A',
-					Position: 'A',
+					Ring:     "A",
+					Position: "A",
 				},
 			},
-			Reflector: ReflectorA,
+			ReflectorID: "A",
 		},
-		Pairs: []CryptoPair{
+		Pairs: []TestPair{
 			{
 				Plaintext:  "AAAAAAAAAAAA",
 				Ciphertext: "OOWKOENOJSKL",
@@ -50,23 +50,23 @@ var samples = []Sample{
 			Rotors: []RotorInfo{
 				{
 					ID:       "I",
-					Ring:     'A',
-					Position: 'A',
+					Ring:     "A",
+					Position: "A",
 				},
 				{
 					ID:       "II",
-					Ring:     'A',
-					Position: 'B',
+					Ring:     "A",
+					Position: "B",
 				},
 				{
 					ID:       "III",
-					Ring:     'A',
-					Position: 'C',
+					Ring:     "A",
+					Position: "C",
 				},
 			},
-			Reflector: ReflectorA,
+			ReflectorID: "A",
 		},
-		Pairs: []CryptoPair{
+		Pairs: []TestPair{
 			{
 				Plaintext:  "HelloWorld",
 				Ciphertext: "MFBXQLVGHA",
@@ -79,23 +79,23 @@ var samples = []Sample{
 			Rotors: []RotorInfo{
 				{
 					ID:       "I",
-					Ring:     'C',
-					Position: 'S',
+					Ring:     "C",
+					Position: "S",
 				},
 				{
 					ID:       "II",
-					Ring:     'D',
-					Position: 'H',
+					Ring:     "D",
+					Position: "H",
 				},
 				{
 					ID:       "III",
-					Ring:     'W',
-					Position: 'J',
+					Ring:     "W",
+					Position: "J",
 				},
 			},
-			Reflector: ReflectorB,
+			ReflectorID: "B",
 		},
-		Pairs: []CryptoPair{
+		Pairs: []TestPair{
 			{
 				Plaintext:  "ABCDEF",
 				Ciphertext: "DFRHYR",
@@ -112,23 +112,23 @@ var samples = []Sample{
 			Rotors: []RotorInfo{
 				{
 					ID:       "I",
-					Ring:     'D',
-					Position: 'A',
+					Ring:     "D",
+					Position: "A",
 				},
 				{
 					ID:       "II",
-					Ring:     'E',
-					Position: 'B',
+					Ring:     "E",
+					Position: "B",
 				},
 				{
 					ID:       "III",
-					Ring:     'F',
-					Position: 'C',
+					Ring:     "F",
+					Position: "C",
 				},
 			},
-			Reflector: ReflectorB,
+			ReflectorID: "B",
 		},
-		Pairs: []CryptoPair{
+		Pairs: []TestPair{
 			{
 				Plaintext:  "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
 				Ciphertext: "TCNXDQYWKDEKCQKLLDNCEEIAJI",
@@ -154,30 +154,30 @@ func TestSamples(t *testing.T) {
 }
 
 func TestIncludeForeign(t *testing.T) {
-	var samples = []Sample{
+	var samples = []TestSample{
 		{
 			Config: Config{
 				Plugboard: "BQ CR DI EJ KW MT OS PX UZ GH",
 				Rotors: []RotorInfo{
 					{
 						ID:       "VI",
-						Ring:     'A',
-						Position: 'A',
+						Ring:     "A",
+						Position: "A",
 					},
 					{
 						ID:       "I",
-						Ring:     'A',
-						Position: 'Q',
+						Ring:     "A",
+						Position: "Q",
 					},
 					{
 						ID:       "III",
-						Ring:     'A',
-						Position: 'L',
+						Ring:     "A",
+						Position: "L",
 					},
 				},
-				Reflector: ReflectorB,
+				ReflectorID: "B",
 			},
-			Pairs: []CryptoPair{
+			Pairs: []TestPair{
 				{
 					Plaintext:  "Hello, World!",
 					Ciphertext: "GKTWX, GEGZQ!",
@@ -205,30 +205,30 @@ func TestIncludeForeign(t *testing.T) {
 }
 
 func TestIgnoreForeign(t *testing.T) {
-	var samples = []Sample{
+	var samples = []TestSample{
 		{
 			Config: Config{
 				Plugboard: "BQ CR DI EJ KW MT OS PX UZ GH",
 				Rotors: []RotorInfo{
 					{
 						ID:       "VI",
-						Ring:     'A',
-						Position: 'A',
+						Ring:     "A",
+						Position: "A",
 					},
 					{
 						ID:       "I",
-						Ring:     'A',
-						Position: 'Q',
+						Ring:     "A",
+						Position: "Q",
 					},
 					{
 						ID:       "III",
-						Ring:     'A',
-						Position: 'L',
+						Ring:     "A",
+						Position: "L",
 					},
 				},
-				Reflector: ReflectorB,
+				ReflectorID: "B",
 			},
-			Pairs: []CryptoPair{
+			Pairs: []TestPair{
 				{
 					Plaintext:  "Hello, World!",
 					Ciphertext: "GKTWX GEGZQ",

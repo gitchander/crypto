@@ -37,6 +37,18 @@ func indexToLetter(index int) (letter byte, ok bool) {
 	return 0, false
 }
 
+func parseIndex(s string) (index int, err error) {
+	if len(s) != 1 {
+		return 0, fmt.Errorf("invalid letter %q", s)
+	}
+	letter := s[0]
+	index, ok := letterToIndex(letter)
+	if !ok {
+		return 0, fmt.Errorf("invalid letter %#U", letter)
+	}
+	return index, nil
+}
+
 func errInvalidLetter(letter byte) error {
 	//return fmt.Errorf("invalid letter %#U", letter)
 	return fmt.Errorf("there is an invalid letter %#U", letter)
@@ -76,17 +88,17 @@ func parseLettersN(s string, bs []int) error {
 	return nil
 }
 
-func DoLetter(letter byte, f func(int) int) byte {
-	index, ok := letterToIndex(letter)
-	if !ok {
-		panic("invalid input letter")
-	}
-	out, ok := indexToLetter(f(index))
-	if !ok {
-		panic("invalid output letter")
-	}
-	return out
-}
+// func DoLetter(letter byte, f func(int) int) byte {
+// 	index, ok := letterToIndex(letter)
+// 	if !ok {
+// 		panic("invalid input letter")
+// 	}
+// 	out, ok := indexToLetter(f(index))
+// 	if !ok {
+// 		panic("invalid output letter")
+// 	}
+// 	return out
+// }
 
 var ErrInvalidWiring = errors.New("invalid wiring")
 
@@ -139,3 +151,11 @@ func mod(a, b int) int {
 	}
 	return m
 }
+
+// func parseIndex(b byte) (int, error) {
+// 	index, ok := letterToIndex(b)
+// 	if !ok {
+// 		return 0, errInvalidLetter(b)
+// 	}
+// 	return index, nil
+// }
