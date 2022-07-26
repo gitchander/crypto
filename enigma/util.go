@@ -1,21 +1,15 @@
 package enigma
 
 import (
-	"errors"
 	"fmt"
 )
 
 var alphabet = []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
-func indexMod(index int) int {
-	//return index % nodes
-	return indexModules_[index]
-}
-
-var indexModules_ = func() []int {
-	xs := make([]int, 2*nodes) // [0..25,26..51]
+var indexModules = func() []int {
+	xs := make([]int, 3*positions)
 	for i := range xs {
-		xs[i] = i % nodes
+		xs[i] = i % positions
 	}
 	return xs
 }()
@@ -88,34 +82,33 @@ func parseLettersN(s string, bs []int) error {
 	return nil
 }
 
-// func DoLetter(letter byte, f func(int) int) byte {
-// 	index, ok := letterToIndex(letter)
-// 	if !ok {
-// 		panic("invalid input letter")
-// 	}
-// 	out, ok := indexToLetter(f(index))
-// 	if !ok {
-// 		panic("invalid output letter")
-// 	}
-// 	return out
-// }
-
-var ErrInvalidWiring = errors.New("invalid wiring")
+// var ErrInvalidWiring = errors.New("invalid wiring")
 
 // mapping, wiring
 func parseWiring(wiring string) (dirRev, error) {
 	var dr dirRev
 	bs := []byte(wiring)
-	if len(bs) != nodes {
-		return dr, ErrInvalidWiring
+	if len(bs) != positions {
+		return dr, fmt.Errorf("wiring has invalid length %d", len(bs))
 	}
+	cs := make([]int, positions)
 	for i, b := range bs {
 		j, ok := letterToIndex(b)
 		if !ok {
-			return dr, ErrInvalidWiring
+			return dr, fmt.Errorf("wiring has invalid letter %#U", b)
 		}
 		dr.direct[i] = j
 		dr.reverse[j] = i
+		cs[j]++
+	}
+	for i, c := range cs {
+		if c == 0 {
+			letter, _ := indexToLetter(i)
+			return dr, fmt.Errorf("wiring has not letter %q", letter)
+		} else if c > 1 {
+			letter, _ := indexToLetter(i)
+			return dr, fmt.Errorf("wiring has more than one letter %q", letter)
+		}
 	}
 	return dr, nil
 }
@@ -126,10 +119,10 @@ func parseDirectReverse(input, output string) (dirRev, error) {
 		as = []byte(input)
 		bs = []byte(output)
 	)
-	if (len(as) != nodes) || (len(bs) != nodes) {
+	if (len(as) != positions) || (len(bs) != positions) {
 		return dr, fmt.Errorf("invalid rotor config")
 	}
-	for i := 0; i < nodes; i++ {
+	for i := 0; i < positions; i++ {
 		ai, ok := letterToIndex(as[i])
 		if !ok {
 			return dr, fmt.Errorf("invalid %s letter %q by index %d", "input", as[i], i)
@@ -151,11 +144,3 @@ func mod(a, b int) int {
 	}
 	return m
 }
-
-// func parseIndex(b byte) (int, error) {
-// 	index, ok := letterToIndex(b)
-// 	if !ok {
-// 		return 0, errInvalidLetter(b)
-// 	}
-// 	return index, nil
-// }

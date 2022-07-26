@@ -17,7 +17,7 @@ func NewPlugboard(s string) (*Plugboard, error) {
 func parsePlugboard(s string) (*Plugboard, error) {
 
 	var dr dirRev
-	for i := 0; i < nodes; i++ {
+	for i := 0; i < positions; i++ {
 		dr.direct[i] = i
 		dr.reverse[i] = i
 	}

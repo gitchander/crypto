@@ -36,7 +36,7 @@ func NewRotor(rc RotorConfig) (*Rotor, error) {
 }
 
 func (r *Rotor) Rotate() {
-	r.position = mod((r.position + 1), nodes)
+	r.position = mod((r.position + 1), positions)
 }
 
 func (r *Rotor) Position() int {
@@ -44,7 +44,7 @@ func (r *Rotor) Position() int {
 }
 
 func (r *Rotor) SetPosition(position int) {
-	r.position = mod(position, nodes)
+	r.position = mod(position, positions)
 }
 
 func (r *Rotor) Ring() int {
@@ -52,7 +52,7 @@ func (r *Rotor) Ring() int {
 }
 
 func (r *Rotor) SetRing(ring int) {
-	r.ring = mod(ring, nodes)
+	r.ring = mod(ring, positions)
 }
 
 func (r *Rotor) HasTurnover() bool {
@@ -60,13 +60,29 @@ func (r *Rotor) HasTurnover() bool {
 }
 
 func (r *Rotor) do(index int, reverse bool) int {
-	index = mod((index - r.ring + r.position), nodes)
+	//return r.doV1(index, reverse)
+	return r.doV2(index, reverse)
+}
+
+func (r *Rotor) doV1(index int, reverse bool) int {
+	index = mod((index - r.ring + r.position), positions)
 	if reverse {
 		index = r.reverse[index]
 	} else {
 		index = r.direct[index]
 	}
-	index = mod((index + r.ring - r.position), nodes)
+	index = mod((index + r.ring - r.position), positions)
+	return index
+}
+
+func (r *Rotor) doV2(index int, reverse bool) int {
+	index = indexModules[(index - r.ring + r.position + positions)]
+	if reverse {
+		index = r.reverse[index]
+	} else {
+		index = r.direct[index]
+	}
+	index = indexModules[(index + r.ring - r.position + positions)]
 	return index
 }
 
@@ -94,7 +110,7 @@ func parseTurnovers(s string) ([]bool, error) {
 	if err != nil {
 		return nil, err
 	}
-	turnovers := make([]bool, nodes)
+	turnovers := make([]bool, positions)
 	for _, ti := range tis {
 		turnovers[ti] = true
 	}

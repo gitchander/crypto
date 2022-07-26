@@ -7,3 +7,5 @@ https://www.youtube.com/watch?v=ybkkiGtJmkM
 https://cryptii.com/pipes/enigma-machine
 https://github.com/emedvedev/enigma
 https://github.com/cedricbonhomme/pyEnigma
+https://blog.gopheracademy.com/advent-2016/enigma-emulator-in-go/
+https://golangexample.com/terminal-enigma-machine-simulator/

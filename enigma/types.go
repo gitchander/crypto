@@ -2,9 +2,10 @@ package enigma
 
 // lettersPerAlphabet
 // nodesPerRotor
-const nodes = 26
+// electrical contacts
+const positions = 26
 
-type convertTable [nodes]int
+type convertTable [positions]int
 
 type dirRev struct {
 	direct  convertTable
