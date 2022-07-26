@@ -41,4 +41,14 @@ var defaultRotors = map[string]RotorConfig{
 		Wiring:    "FKQHTLXOCBJSPDZRAMEWNIUYGV",
 		Turnovers: "ZM",
 	},
+	"Beta": RotorConfig{
+		Name:      "Rotor Beta",
+		Wiring:    "LEYJVCNIXWPBQMDRTAKZGFUHOS",
+		Turnovers: "",
+	},
+	"Gamma": RotorConfig{
+		Name:      "Rotor Gamma",
+		Wiring:    "FSOKANUERHMBTIYCWLQPZXVGJD",
+		Turnovers: "",
+	},
 }

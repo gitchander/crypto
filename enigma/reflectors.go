@@ -13,4 +13,12 @@ var reflectors = map[string]ReflectorConfig{
 		Name:   "Reflector C",
 		Wiring: "FVPJIAOYEDRZXWGCTKUQSBNMHL",
 	},
+	"B-thin": ReflectorConfig{
+		Name:   "Reflector B-thin",
+		Wiring: "ENKQAUYWJICOPBLMDXZVFTHRGS",
+	},
+	"C-thin": ReflectorConfig{
+		Name:   "Reflector C-thin",
+		Wiring: "RDOBJNTKVEHMLFCWZAXGYIPSUQ",
+	},
 }
