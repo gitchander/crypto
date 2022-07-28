@@ -16,6 +16,11 @@ func NewPlugboard(s string) (*Plugboard, error) {
 // example: "AV BS CG DL FU HZ IN KM OW RX"
 func parsePlugboard(s string) (*Plugboard, error) {
 
+	err := ValidatePlugboard(s)
+	if err != nil {
+		return nil, err
+	}
+
 	var dr dirRev
 	for i := 0; i < positions; i++ {
 		dr.direct[i] = i

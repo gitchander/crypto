@@ -22,7 +22,7 @@ func NewReflector(rc ReflectorConfig) (*Reflector, error) {
 }
 
 func NewReflectorByID(id string) (*Reflector, error) {
-	rc, ok := reflectors[id]
+	rc, ok := historicalReflectors[id]
 	if !ok {
 		return nil, fmt.Errorf("invalid reflector id %q", id)
 	}

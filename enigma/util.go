@@ -14,6 +14,7 @@ var indexModules = func() []int {
 	return xs
 }()
 
+// Letter to position
 func letterToIndex(letter byte) (index int, ok bool) {
 	if ('a' <= letter) && (letter <= 'z') {
 		return int(letter - 'a'), true
@@ -24,9 +25,10 @@ func letterToIndex(letter byte) (index int, ok bool) {
 	return 0, false
 }
 
+// Position to letter
 func indexToLetter(index int) (letter byte, ok bool) {
-	if (0 <= index) && (index <= 25) {
-		return byte(index + 'A'), true
+	if (0 <= index) && (index < len(alphabet)) {
+		return alphabet[index], true
 	}
 	return 0, false
 }
@@ -82,11 +84,15 @@ func parseLettersN(s string, bs []int) error {
 	return nil
 }
 
-// var ErrInvalidWiring = errors.New("invalid wiring")
-
 // mapping, wiring
 func parseWiring(wiring string) (dirRev, error) {
+
 	var dr dirRev
+	err := ValidateWiring(wiring)
+	if err != nil {
+		return dr, err
+	}
+
 	bs := []byte(wiring)
 	if len(bs) != positions {
 		return dr, fmt.Errorf("wiring has invalid length %d", len(bs))
@@ -113,34 +119,22 @@ func parseWiring(wiring string) (dirRev, error) {
 	return dr, nil
 }
 
-func parseDirectReverse(input, output string) (dirRev, error) {
-	var dr dirRev
-	var (
-		as = []byte(input)
-		bs = []byte(output)
-	)
-	if (len(as) != positions) || (len(bs) != positions) {
-		return dr, fmt.Errorf("invalid rotor config")
-	}
-	for i := 0; i < positions; i++ {
-		ai, ok := letterToIndex(as[i])
-		if !ok {
-			return dr, fmt.Errorf("invalid %s letter %q by index %d", "input", as[i], i)
-		}
-		bi, ok := letterToIndex(bs[i])
-		if !ok {
-			return dr, fmt.Errorf("invalid %s letter %q by index %d", "output", bs[i], i)
-		}
-		dr.direct[ai] = bi
-		dr.reverse[bi] = ai
-	}
-	return dr, nil
-}
-
 func mod(a, b int) int {
 	m := a % b
 	if m < 0 {
 		m += b
 	}
 	return m
+}
+
+func duplicateRunes(s string) (rs []rune) {
+	m := make(map[rune]struct{})
+	for _, r := range s {
+		if _, ok := m[r]; ok {
+			rs = append(rs, r)
+		} else {
+			m[r] = struct{}{}
+		}
+	}
+	return rs
 }

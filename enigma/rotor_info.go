@@ -4,23 +4,19 @@ import (
 	"fmt"
 )
 
+// Ring and Position possible values: ["A".."Z"]
+
 type RotorInfo struct {
-	ID string `json:"id"`
-
-	// Ring settings
-	// ['A'..'Z']
-	Ring string `json:"ring"`
-
-	// Initial position
-	// ['A'..'Z']
+	ID       string `json:"id"`
+	Ring     string `json:"ring"`
 	Position string `json:"position"`
 }
 
 func NewRotorByInfo(ri RotorInfo) (*Rotor, error) {
 
-	rc, ok := defaultRotors[ri.ID]
+	rc, ok := historicalRotors[ri.ID]
 	if !ok {
-		return nil, fmt.Errorf("invalid rotor id %q", ri.ID)
+		return nil, fmt.Errorf("Unknown rotor by id %q", ri.ID)
 	}
 	r, err := NewRotor(rc)
 	if err != nil {

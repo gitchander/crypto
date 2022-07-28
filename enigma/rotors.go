@@ -1,53 +1,54 @@
 package enigma
 
-var defaultRotors = map[string]RotorConfig{
+// Historical rotors:
+var historicalRotors = map[string]RotorConfig{
 	"I": RotorConfig{
-		Name:      "Rotor I",
+		Name:      "I",
 		Wiring:    "EKMFLGDQVZNTOWYHXUSPAIBRCJ",
 		Turnovers: "Q",
 	},
 	"II": RotorConfig{
-		Name:      "Rotor II",
+		Name:      "II",
 		Wiring:    "AJDKSIRUXBLHWTMCQGZNPYFVOE",
 		Turnovers: "E",
 	},
 	"III": RotorConfig{
-		Name:      "Rotor III",
+		Name:      "III",
 		Wiring:    "BDFHJLCPRTXVZNYEIWGAKMUSQO",
 		Turnovers: "V",
 	},
 	"IV": RotorConfig{
-		Name:      "Rotor IV",
+		Name:      "IV",
 		Wiring:    "ESOVPZJAYQUIRHXLNFTGKDCMWB",
 		Turnovers: "J",
 	},
 	"V": RotorConfig{
-		Name:      "Rotor V",
+		Name:      "V",
 		Wiring:    "VZBRGITYUPSDNHLXAWMJQOFECK",
 		Turnovers: "Z",
 	},
 	"VI": RotorConfig{
-		Name:      "Rotor VI",
+		Name:      "VI",
 		Wiring:    "JPGVOUMFYQBENHZRDKASXLICTW",
 		Turnovers: "ZM",
 	},
 	"VII": RotorConfig{
-		Name:      "Rotor VII",
+		Name:      "VII",
 		Wiring:    "NZJHGRCXMYSWBOUFAIVLPEKQDT",
 		Turnovers: "ZM",
 	},
 	"VIII": RotorConfig{
-		Name:      "Rotor VIII",
+		Name:      "VIII",
 		Wiring:    "FKQHTLXOCBJSPDZRAMEWNIUYGV",
 		Turnovers: "ZM",
 	},
 	"Beta": RotorConfig{
-		Name:      "Rotor Beta",
+		Name:      "Beta",
 		Wiring:    "LEYJVCNIXWPBQMDRTAKZGFUHOS",
 		Turnovers: "",
 	},
 	"Gamma": RotorConfig{
-		Name:      "Rotor Gamma",
+		Name:      "Gamma",
 		Wiring:    "FSOKANUERHMBTIYCWLQPZXVGJD",
 		Turnovers: "",
 	},

@@ -1,24 +1,25 @@
 package enigma
 
-var reflectors = map[string]ReflectorConfig{
+// Historical reflectors:
+var historicalReflectors = map[string]ReflectorConfig{
 	"A": ReflectorConfig{
-		Name:   "Reflector A",
+		Name:   "A",
 		Wiring: "EJMZALYXVBWFCRQUONTSPIKHGD",
 	},
 	"B": ReflectorConfig{
-		Name:   "Reflector B",
+		Name:   "B",
 		Wiring: "YRUHQSLDPXNGOKMIEBFZCWVJAT",
 	},
 	"C": ReflectorConfig{
-		Name:   "Reflector C",
+		Name:   "C",
 		Wiring: "FVPJIAOYEDRZXWGCTKUQSBNMHL",
 	},
 	"B-thin": ReflectorConfig{
-		Name:   "Reflector B-thin",
+		Name:   "B-thin",
 		Wiring: "ENKQAUYWJICOPBLMDXZVFTHRGS",
 	},
 	"C-thin": ReflectorConfig{
-		Name:   "Reflector C-thin",
+		Name:   "C-thin",
 		Wiring: "RDOBJNTKVEHMLFCWZAXGYIPSUQ",
 	},
 }

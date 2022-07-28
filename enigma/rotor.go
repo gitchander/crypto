@@ -95,13 +95,13 @@ func (r *Rotor) Reverse(index int) int {
 }
 
 func rotateRotors(rs []*Rotor) {
-	prevOK := true // Turnover
+	hasPrev := true // first Turnover
 	for i := len(rs) - 1; i >= 0; i-- {
 		ok := rs[i].HasTurnover()
-		if prevOK || ok {
+		if hasPrev || ok {
 			rs[i].Rotate()
 		}
-		prevOK = ok
+		hasPrev = ok
 	}
 }
 

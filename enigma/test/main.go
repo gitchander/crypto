@@ -13,6 +13,8 @@ func main() {
 	testMarshalJSON()
 	testDonitzMessage()
 	testCompareStrings()
+	testValidate()
+	genCodeLines()
 }
 
 func testMarshalJSON() {
@@ -161,5 +163,53 @@ func testCompareStrings() {
 		if a[i] != b[i] {
 			fmt.Printf("%d: (%#U) != (%#U)\n", i, a[i], b[i])
 		}
+	}
+}
+
+func testValidate() {
+	err := enigma.ValidatePosition("Y")
+	checkError(err)
+
+	err = enigma.ValidateWiring("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	checkError(err)
+
+	err = enigma.ValidatePlugboard("AB CD FG XR")
+	checkError(err)
+}
+
+func genCodeLines() {
+	st := "KRKRALLEXXFOLGENDESISTSOFORTBEKANNTZUGEBENXXICHHABEFOLGELNBEBEFEHLERHALTENXXJANSTERLEDESBISHERIGXNREICHSMARSCHALLSJGOERINGJSETZTDERFUEHRERSIEYHVRRGRZSSADMIRALYALSSEINENNACHFOLGEREINXSCHRIFTLSCHEVOLLMACHTUNTERWEGSXABSOFORTSOLLENSIESAEMTLICHEMASSNAHMENVERFUEGENYDIESICHAUSDERGEGENWAERTIGENLAGEERGEBENXGEZXREICHSLEITEIKKTULPEKKJBORMANNJXXOBXDXMMMDURNHFKSTXKOMXADMXUUUBOOIEXKP"
+	st = strings.ToUpper(st)
+	inputText := onlyLetters(st)
+	var b strings.Builder
+	const (
+		lettersPerGroup = 5
+		groupsPerLine   = 7
+
+		lettersPerLine = lettersPerGroup * groupsPerLine
+	)
+	for i := 0; i < len(inputText); i++ {
+		b.WriteByte(inputText[i])
+		j := (i + 1)
+		if (j % lettersPerLine) == 0 {
+			b.WriteByte('\n')
+		} else if (j % lettersPerGroup) == 0 {
+			b.WriteByte(' ')
+		}
+	}
+	result := b.String()
+	fmt.Println(result)
+	lines := strings.Split(result, "\n")
+
+	fmt.Println("var lines = []string{")
+	for _, line := range lines {
+		fmt.Printf("%s%q,\n", "\t", line)
+	}
+	fmt.Println("}")
+
+	outputText := onlyLetters(joinLines(lines))
+	if inputText != outputText {
+		err := fmt.Errorf("%q != %q\n", inputText, outputText)
+		checkError(err)
 	}
 }
