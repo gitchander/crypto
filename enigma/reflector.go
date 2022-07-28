@@ -10,7 +10,7 @@ type ReflectorConfig struct {
 }
 
 type Reflector struct {
-	direct convertTable
+	convertTable
 }
 
 func NewReflector(rc ReflectorConfig) (*Reflector, error) {
@@ -18,7 +18,7 @@ func NewReflector(rc ReflectorConfig) (*Reflector, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Reflector{direct: dr.direct}, nil
+	return &Reflector{convertTable: dr.direct}, nil
 }
 
 func NewReflectorByID(id string) (*Reflector, error) {
@@ -27,8 +27,4 @@ func NewReflectorByID(id string) (*Reflector, error) {
 		return nil, fmt.Errorf("invalid reflector id %q", id)
 	}
 	return NewReflector(rc)
-}
-
-func (r *Reflector) Direct(index int) int {
-	return r.direct[index]
 }

@@ -66,7 +66,7 @@ func (e *Enigma) feed(index int) int {
 		index = e.rotors[i].Direct(index)
 	}
 
-	index = e.reflector.Direct(index)
+	index = e.reflector.convertTable[index]
 
 	for i := 0; i < n; i++ {
 		index = e.rotors[i].Reverse(index)
