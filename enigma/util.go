@@ -2,6 +2,7 @@ package enigma
 
 import (
 	"fmt"
+	"strings"
 )
 
 var alphabet = []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
@@ -137,4 +138,39 @@ func duplicateRunes(s string) (rs []rune) {
 		}
 	}
 	return rs
+}
+
+func JoinLines(lines []string) string {
+	var b strings.Builder
+	for _, line := range lines {
+		b.WriteString(line)
+	}
+	return b.String()
+}
+
+func OnlyLetters(s string) string {
+	as := []byte(s)
+	bs := make([]byte, 0, len(as))
+	for _, a := range as {
+		if byteIsLetter(a) {
+			bs = append(bs, a)
+		}
+	}
+	return string(bs)
+}
+
+func byteIsLetter(b byte) bool {
+	if ('A' <= b) && (b <= 'Z') {
+		return true
+	}
+	if ('a' <= b) && (b <= 'z') {
+		return true
+	}
+	return false
+}
+
+func LinesToText(lines []string) string {
+	s := JoinLines(lines)
+	s = OnlyLetters(s)
+	return strings.ToUpper(s)
 }

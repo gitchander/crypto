@@ -17,6 +17,12 @@ func main() {
 	genCodeLines()
 }
 
+func checkError(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func testMarshalJSON() {
 	c := enigma.Config{
 		Plugboard: "BQ CR DI EJ KW MT OS PX UZ GH",
@@ -86,7 +92,7 @@ func testDonitzMessage() {
 		ReflectorID: "C-thin",
 	}
 
-	ciphertext := joinLines([]string{
+	ciphertext := enigma.JoinLines([]string{
 		"DUHF TETO LANO TCTO UARB BFPM HPHG CZXT DYGA HGUF XGEW KBLK GJWL QXXT",
 		"GPJJ AVTO CKZF SLPP QIHZ FXOE BWII EKFZ LCLO AQJU LJOY HSSM BBGW HZAN",
 		"VOII PYRB RTDJ QDJJ OQKC XWDN BBTY VXLY TAPG VEAT XSON PNYN QFUD BBHH",
@@ -96,7 +102,7 @@ func testDonitzMessage() {
 		"RECW WUTL RTTV LBHY OORG LGOW UXNX HMHY FAAC QEKT HSJW DUHF TETO",
 	})
 	ciphertext = trimMessageIndicator(ciphertext)
-	ciphertext = onlyLetters(ciphertext)
+	ciphertext = enigma.OnlyLetters(ciphertext)
 
 	e, err := enigma.New(c)
 	checkError(err)
@@ -109,46 +115,11 @@ func testDonitzMessage() {
 	fmt.Println("plaintext: ", plaintext)
 }
 
-func joinLines(lines []string) string {
-	var b strings.Builder
-	for _, line := range lines {
-		b.WriteString(line)
-	}
-	return b.String()
-}
-
 func trimMessageIndicator(s string) string {
 	const messageIndicator = "DUHF TETO"
 	s = strings.TrimPrefix(s, messageIndicator)
 	s = strings.TrimSuffix(s, messageIndicator)
 	return s
-}
-
-func onlyLetters(s string) string {
-	as := []byte(s)
-	bs := make([]byte, 0, len(as))
-	for _, a := range as {
-		if byteIsLetter(a) {
-			bs = append(bs, a)
-		}
-	}
-	return string(bs)
-}
-
-func byteIsLetter(b byte) bool {
-	if ('A' <= b) && (b <= 'Z') {
-		return true
-	}
-	if ('a' <= b) && (b <= 'z') {
-		return true
-	}
-	return false
-}
-
-func checkError(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
 }
 
 func testCompareStrings() {
@@ -178,13 +149,13 @@ func testValidate() {
 }
 
 func genCodeLines() {
-	st := "KRKRALLEXXFOLGENDESISTSOFORTBEKANNTZUGEBENXXICHHABEFOLGELNBEBEFEHLERHALTENXXJANSTERLEDESBISHERIGXNREICHSMARSCHALLSJGOERINGJSETZTDERFUEHRERSIEYHVRRGRZSSADMIRALYALSSEINENNACHFOLGEREINXSCHRIFTLSCHEVOLLMACHTUNTERWEGSXABSOFORTSOLLENSIESAEMTLICHEMASSNAHMENVERFUEGENYDIESICHAUSDERGEGENWAERTIGENLAGEERGEBENXGEZXREICHSLEITEIKKTULPEKKJBORMANNJXXOBXDXMMMDURNHFKSTXKOMXADMXUUUBOOIEXKP"
+	st := "JEFOJGZCXPAKWXLSZHPPGKGWFWRZVZNHFCJDYYQHSIUZZCUDTOGITKJFIKEBWFGCUTVKKICEODRTQVKWNYNULALGUIZVLRHXTMUMCSUTQPFIASMCDSNBRHSQVKRXHGPZOJMGVABOWIYPMCAFUDQVAMWCFIRYJLIOWGWYWSUFLLQQFNJGZRPNHFTGPPPHAAVVCMMVQMCILQFNGCZCDOJPBSQZBVYPELQQACQPWDBJAGKICUMOHAGVCYBRILTZHUQSPXSVUDXRUZCLJWJFFWVFYBHYGCHDVUIDJIEPMBHATOIIJITBJVBEDAUDJVQPOGNZPTRCREQQKDXMEQMMRJEQITFCSEZUPNUOKWCMBFKPTBKHTXEXZOJYENGCAYOUMLOMVMRHTCQUTRETBDZDDAMGOFKHTNGIJOXIMFFLFMIYRCLGNDUDGEDGXFGQVDESIDICWNVOTHXTLSFNLQKRILHTNMBVWZTRJMPKFGKZALAVAKGAJZTYBVBZECTAQDVNNPXJQSQZENZDBBEZURNOOZIKVJZVWRIUJHFLMKPSUKVIFKUFNAFOGGPKEOUDKKUHHXJIRIOQAZWDSNDCSNJZBYCVUFUSPMGYGRLOQUIIEIMMHPYAVAQUJGSJTJXDLYXLMVRQPEHYJDUVCUTBYJFMNCBFUAUIVGZXSYEXRQXGPHLHEVBUXACKSCVLSBIRJTJBNZBHMLSIMGAJPOQDYLJSESONYCITIXWJOLLIWMIQXQREELTJOWACTUBRTHEKGZYSXVEVIPVLGOOSDECOQZJAKDWIZHZNXILSNTSDJRMJRCEBNTHGXIEWYMGTCFOMRCGZWHDWYMHYYHWZNMCGMCMWFHYUZYGBNRBZTXPMCHIVYNRBVAPWGYTUJDQXVUOJZXMGSIUKMJBDRWFXQDDXCJZFJQPRRTUDAGDHPJSELNYTEFLBHKCJJNDFRZNBZMFSPXQNTVSVNMBZLICEFOJILFSVLCIOGIUQBVKMGSAEOKMIXWUO"
 	st = strings.ToUpper(st)
-	inputText := onlyLetters(st)
+	inputText := enigma.OnlyLetters(st)
 	var b strings.Builder
 	const (
-		lettersPerGroup = 5
-		groupsPerLine   = 7
+		lettersPerGroup = 4
+		groupsPerLine   = 12
 
 		lettersPerLine = lettersPerGroup * groupsPerLine
 	)
@@ -207,7 +178,7 @@ func genCodeLines() {
 	}
 	fmt.Println("}")
 
-	outputText := onlyLetters(joinLines(lines))
+	outputText := enigma.OnlyLetters(enigma.JoinLines(lines))
 	if inputText != outputText {
 		err := fmt.Errorf("%q != %q\n", inputText, outputText)
 		checkError(err)

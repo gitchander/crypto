@@ -46,7 +46,6 @@ func (e *enigmaPos) SetPositions(s string) {
 	}
 }
 
-//------------------------------------------------------------------------------
 func TestRotate(t *testing.T) {
 
 	samples := [][]string{
