@@ -1,9 +1,7 @@
 package enigma
 
 import (
-	"fmt"
 	"strings"
-	"unicode/utf8"
 )
 
 type Config struct {
@@ -49,10 +47,6 @@ func New(c Config) (*Enigma, error) {
 
 func (e *Enigma) rotate() {
 	rotateRotors(e.rotors)
-}
-
-func makeRotorName(i int, suffix string) string {
-	return fmt.Sprintf("rotor[%d]-%s", i, suffix)
 }
 
 func (e *Enigma) feed(index int) int {
@@ -139,12 +133,4 @@ func (e *Enigma) FeedIgnoreForeign(s string) string {
 		}
 	}
 	return b.String()
-}
-
-// one byte represent
-func runeSingleByte(r rune) (byte, bool) {
-	if uint32(r) < utf8.RuneSelf {
-		return byte(r), true
-	}
-	return 0, false
 }

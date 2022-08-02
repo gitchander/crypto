@@ -3,48 +3,8 @@ package enigma
 import (
 	"fmt"
 	"strings"
+	"unicode/utf8"
 )
-
-var alphabet = []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
-var indexModules = func() []int {
-	xs := make([]int, 3*positions)
-	for i := range xs {
-		xs[i] = i % positions
-	}
-	return xs
-}()
-
-// Letter to position
-func letterToIndex(letter byte) (index int, ok bool) {
-	if ('a' <= letter) && (letter <= 'z') {
-		return int(letter - 'a'), true
-	}
-	if ('A' <= letter) && (letter <= 'Z') {
-		return int(letter - 'A'), true
-	}
-	return 0, false
-}
-
-// Position to letter
-func indexToLetter(index int) (letter byte, ok bool) {
-	if (0 <= index) && (index < len(alphabet)) {
-		return alphabet[index], true
-	}
-	return 0, false
-}
-
-func parseIndex(s string) (index int, err error) {
-	if len(s) != 1 {
-		return 0, fmt.Errorf("invalid letter %q", s)
-	}
-	letter := s[0]
-	index, ok := letterToIndex(letter)
-	if !ok {
-		return 0, fmt.Errorf("invalid letter %#U", letter)
-	}
-	return index, nil
-}
 
 func errInvalidLetter(letter byte) error {
 	//return fmt.Errorf("invalid letter %#U", letter)
@@ -140,37 +100,50 @@ func duplicateRunes(s string) (rs []rune) {
 	return rs
 }
 
-func JoinLines(lines []string) string {
+func JoinStrings(ss []string) string {
+	var b strings.Builder
+	for _, s := range ss {
+		b.WriteString(s)
+	}
+	return b.String()
+}
+
+func JoinLines(linePrefix string, lines []string) string {
 	var b strings.Builder
 	for _, line := range lines {
+		b.WriteString(linePrefix)
 		b.WriteString(line)
+		b.WriteByte('\n')
 	}
 	return b.String()
 }
 
 func OnlyLetters(s string) string {
-	as := []byte(s)
-	bs := make([]byte, 0, len(as))
-	for _, a := range as {
-		if byteIsLetter(a) {
-			bs = append(bs, a)
+	rs := []rune(s)
+	bs := make([]byte, 0, len(rs))
+	for _, r := range rs {
+		b, ok := runeSingleByte(r)
+		if ok {
+			index, ok := letterToIndex(b)
+			if ok {
+				letter, _ := indexToLetter(index)
+				bs = append(bs, letter)
+			}
 		}
 	}
 	return string(bs)
 }
 
-func byteIsLetter(b byte) bool {
-	if ('A' <= b) && (b <= 'Z') {
-		return true
-	}
-	if ('a' <= b) && (b <= 'z') {
-		return true
-	}
-	return false
-}
-
 func LinesToText(lines []string) string {
-	s := JoinLines(lines)
+	s := JoinLines("", lines)
 	s = OnlyLetters(s)
 	return strings.ToUpper(s)
+}
+
+// one byte represent
+func runeSingleByte(r rune) (byte, bool) {
+	if uint32(r) < utf8.RuneSelf {
+		return byte(r), true
+	}
+	return 0, false
 }

@@ -1,5 +1,4 @@
 http://practicalcryptography.com/ciphers/enigma-cipher/
-
 https://www.cs.cornell.edu/courses/cs3110/2015fa/a1/a1.html
 https://en.wikipedia.org/wiki/Enigma_rotor_details
 https://ru.wikipedia.org/wiki/%D0%AD%D0%BD%D0%B8%D0%B3%D0%BC%D0%B0

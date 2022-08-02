@@ -15,6 +15,7 @@ func main() {
 	testCompareStrings()
 	testValidate()
 	genCodeLines()
+	testJoinLines()
 }
 
 func checkError(err error) {
@@ -92,7 +93,7 @@ func testDonitzMessage() {
 		ReflectorID: "C-thin",
 	}
 
-	ciphertext := enigma.JoinLines([]string{
+	ciphertext := enigma.JoinStrings([]string{
 		"DUHF TETO LANO TCTO UARB BFPM HPHG CZXT DYGA HGUF XGEW KBLK GJWL QXXT",
 		"GPJJ AVTO CKZF SLPP QIHZ FXOE BWII EKFZ LCLO AQJU LJOY HSSM BBGW HZAN",
 		"VOII PYRB RTDJ QDJJ OQKC XWDN BBTY VXLY TAPG VEAT XSON PNYN QFUD BBHH",
@@ -178,9 +179,23 @@ func genCodeLines() {
 	}
 	fmt.Println("}")
 
-	outputText := enigma.OnlyLetters(enigma.JoinLines(lines))
+	outputText := enigma.OnlyLetters(enigma.JoinLines("", lines))
 	if inputText != outputText {
 		err := fmt.Errorf("%q != %q\n", inputText, outputText)
 		checkError(err)
 	}
+}
+
+func testJoinLines() {
+	lines := []string{
+		"DUHF TETO LANO TCTO UARB BFPM HPHG CZXT DYGA HGUF XGEW KBLK GJWL QXXT",
+		"GPJJ AVTO CKZF SLPP QIHZ FXOE BWII EKFZ LCLO AQJU LJOY HSSM BBGW HZAN",
+		"VOII PYRB RTDJ QDJJ OQKC XWDN BBTY VXLY TAPG VEAT XSON PNYN QFUD BBHH",
+		"VWEP YEYD OHNL XKZD NWRH DUWU JUMW WVII WZXI VIUQ DRHY MNCY EFUA PNHO",
+		"TKHK GDNP SAKN UAGH JZSM JBMH VTRE QEDG XHLZ WIFU SKDQ VELN MIMI THBH",
+		"DBWV HDFY HJOQ IHOR TDJD BWXE MEAY XGYQ XOHF DMYU XXNO JAZR SGHP LWML",
+		"RECW WUTL RTTV LBHY OORG LGOW UXNX HMHY FAAC QEKT HSJW DUHF TETO",
+	}
+	text := enigma.JoinLines("\t", lines)
+	fmt.Print(text)
 }
