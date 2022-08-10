@@ -8,7 +8,7 @@ import (
 
 var (
 	regexpPosition      = regexp.MustCompile("^[A-Z]$")
-	regexpWiring        = regexp.MustCompile("^([A-Z]{26})$")
+	regexpWiring        = regexp.MustCompile(fmt.Sprintf("^([A-Z]{%d})$", positions))
 	regexpPlugboardPair = regexp.MustCompile("^([A-Z]{2})$")
 )
 

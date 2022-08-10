@@ -1,7 +1,6 @@
 package enigma
 
 type RotorConfig struct {
-	Name      string
 	Wiring    string
 	Turnovers string
 }
@@ -33,6 +32,18 @@ func NewRotor(rc RotorConfig) (*Rotor, error) {
 		turnovers: turnovers,
 	}
 	return r, nil
+}
+
+func parseTurnovers(s string) ([]bool, error) {
+	tis, err := parseLetters(s)
+	if err != nil {
+		return nil, err
+	}
+	turnovers := make([]bool, positions)
+	for _, ti := range tis {
+		turnovers[ti] = true
+	}
+	return turnovers, nil
 }
 
 func (r *Rotor) Rotate() {
@@ -103,16 +114,4 @@ func rotateRotors(rs []*Rotor) {
 		}
 		hasPrev = ok
 	}
-}
-
-func parseTurnovers(s string) ([]bool, error) {
-	tis, err := parseLetters(s)
-	if err != nil {
-		return nil, err
-	}
-	turnovers := make([]bool, positions)
-	for _, ti := range tis {
-		turnovers[ti] = true
-	}
-	return turnovers, nil
 }

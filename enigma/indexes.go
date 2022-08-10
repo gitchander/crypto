@@ -49,7 +49,7 @@ func letterToIndexSlow(letter byte) (index int, ok bool) {
 func letterToIndex(letter byte) (index int, ok bool) {
 	x := tableIndexes[letter]
 	if (x & maskByteIsLetter) != 0 {
-		return int(x ^ maskByteIsLetter), true
+		return int(x &^ maskByteIsLetter), true
 	}
 	return 0, false
 }

@@ -13,7 +13,6 @@ func NewPlugboard(s string) (*Plugboard, error) {
 	return parsePlugboard(s)
 }
 
-// example: "AV BS CG DL FU HZ IN KM OW RX"
 func parsePlugboard(s string) (*Plugboard, error) {
 
 	err := ValidatePlugboard(s)

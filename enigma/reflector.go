@@ -5,7 +5,6 @@ import (
 )
 
 type ReflectorConfig struct {
-	Name   string
 	Wiring string
 }
 
