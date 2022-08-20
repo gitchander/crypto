@@ -8,6 +8,7 @@ import (
 
 	"github.com/gitchander/crypto/enigma"
 	"github.com/gitchander/crypto/enigma/base16"
+	"github.com/gitchander/crypto/enigma/base26"
 )
 
 func main() {
@@ -17,7 +18,8 @@ func main() {
 	testValidate()
 	genCodeLines()
 	testJoinLines()
-	testUtf8String()
+	testUtf8Base16()
+	testUtf8Base26()
 }
 
 func checkError(err error) {
@@ -202,7 +204,7 @@ func testJoinLines() {
 	fmt.Print(text)
 }
 
-func testUtf8String() {
+func testUtf8Base16() {
 	text := "Hello, 世界"
 	//text := "Привіт, світ!"
 	plaintext := base16.EncodeToString([]byte(text))
@@ -247,6 +249,56 @@ func testUtf8String() {
 
 	plaintextDecrypted := d.FeedString(ciphertext)
 	bs, err := base16.DecodeString(plaintextDecrypted)
+	checkError(err)
+	resultText := string(bs)
+
+	fmt.Println("resultText:", resultText)
+}
+
+func testUtf8Base26() {
+	text := "Hello, 世界"
+	plaintext := base26.EncodeToString([]byte(text))
+
+	c := enigma.Config{
+		Plugboard: "AE BF CM DQ HU JN LX PR SZ VW",
+		Rotors: []enigma.RotorInfo{
+			{
+				ID:       "Beta",
+				Ring:     "A",
+				Position: "Y",
+			},
+			{
+				ID:       "V",
+				Ring:     "A",
+				Position: "O",
+			},
+			{
+				ID:       "VI",
+				Ring:     "E",
+				Position: "S",
+			},
+			{
+				ID:       "VIII",
+				Ring:     "L",
+				Position: "Z",
+			},
+		},
+		ReflectorID: "C-thin",
+	}
+
+	e, err := enigma.New(c)
+	checkError(err)
+
+	ciphertext := e.FeedString(plaintext)
+
+	fmt.Println("plaintext:", plaintext)
+	fmt.Println("ciphertext:", ciphertext)
+
+	d, err := enigma.New(c)
+	checkError(err)
+
+	plaintextDecrypted := d.FeedString(ciphertext)
+	bs, err := base26.DecodeString(plaintextDecrypted)
 	checkError(err)
 	resultText := string(bs)
 
