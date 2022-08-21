@@ -65,16 +65,7 @@ func Encode(dst, src []byte) int {
 	}
 
 	if bn > 0 {
-		v := int(ba & mask4bit) // 4 bits
-
-		if v > mask4bitValueMax {
-			ba >>= 4
-			bn -= 4
-		} else {
-			v = int(ba & mask5bit) // 5 bits
-			ba >>= 5
-			bn -= 5
-		}
+		v := int(ba) // ba has 4 or less bits
 
 		dst[j] = encodeTable[v]
 		j++
@@ -92,6 +83,7 @@ func Decode(dst, src []byte) (int, error) {
 	)
 
 	for _, b := range src {
+
 		x, ok := decodeChar(b)
 		if !ok {
 			return j, fmt.Errorf("base26: invalid byte: %#U", rune(b))
@@ -117,14 +109,8 @@ func Decode(dst, src []byte) (int, error) {
 		}
 	}
 
-	if bn > 0 {
-
-		// todo
-
-		// fmt.Printf("bn: %d, ba: %b\n", bn, ba)
-		// if ba != 0 {
-		// 	return j, fmt.Errorf("base26: invalid source (bits: length %d, accumulator %b)", bn, ba)
-		// }
+	if (bn > 4) || (ba != 0) {
+		return j, fmt.Errorf("base26: invalid source (bits: length %d, accumulator %b)", bn, ba)
 	}
 
 	return j, nil

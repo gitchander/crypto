@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -21,7 +22,7 @@ func main() {
 	testJoinLines()
 	testUtf8Base16()
 	testUtf8Base26()
-	testRandBytes()
+	testAnyBytes()
 }
 
 func checkError(err error) {
@@ -307,14 +308,54 @@ func testUtf8Base26() {
 	fmt.Println("resultText:", resultText)
 }
 
-func testRandBytes() {
+func testAnyBytes() {
+
+	c := enigma.Config{
+		Plugboard: "BQ CR DI EJ KW MT OS PX UZ GH",
+		Rotors: []enigma.RotorInfo{
+			{
+				ID:       "I",
+				Ring:     "A",
+				Position: "A",
+			},
+			{
+				ID:       "II",
+				Ring:     "A",
+				Position: "A",
+			},
+			{
+				ID:       "III",
+				Ring:     "A",
+				Position: "A",
+			},
+		},
+		ReflectorID: "A",
+	}
+
 	r := random.NewRandNow()
 	data := make([]byte, r.Intn(50))
 	for i := 0; i < 100; i++ {
-		bs := data[:r.Intn(len(data)+1)]
-		random.FillBytes(r, bs)
-		s := base26.EncodeToString(bs)
-		_ = s
-		// todo
+		plainBytesInput := data[:r.Intn(len(data)+1)]
+		random.FillBytes(r, plainBytesInput)
+
+		plainTextInput := base26.EncodeToString(plainBytesInput)
+
+		e, err := enigma.New(c)
+		checkError(err)
+
+		cipherText := e.FeedString(plainTextInput)
+
+		d, err := enigma.New(c)
+		checkError(err)
+
+		plainTextOutput := d.FeedString(cipherText)
+
+		plainBytesOutput, err := base26.DecodeString(plainTextOutput)
+		checkError(err)
+
+		if !(bytes.Equal(plainBytesInput, plainBytesOutput)) {
+			err := fmt.Errorf("[%x] != [%x]\n", plainBytesInput, plainBytesOutput)
+			checkError(err)
+		}
 	}
 }

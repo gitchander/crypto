@@ -9,8 +9,9 @@ import (
 )
 
 func main() {
-	testBase26Decode()
-	testBase26EncodeHex()
+	testEncode()
+	//testDecode()
+	//testEncodeHex()
 }
 
 func checkError(err error) {
@@ -19,15 +20,24 @@ func checkError(err error) {
 	}
 }
 
-func testBase26Decode() {
-	//s := "NPFOMNOJBTMJGFGAPMDXCOJJZOJIMSKKMLJNMGDPGAMFDXDWH"
-	s := "KK"
+func testEncode() {
+	data, err := hex.DecodeString("00")
+	checkError(err)
+	s := base26.EncodeToString(data)
+	fmt.Println(s)
+}
+
+func testDecode() {
+	s := "ABSA"
+	//s := "AAA"
 	bs, err := base26.DecodeString(s)
 	checkError(err)
 	fmt.Printf("%x\n", bs)
+	q := base26.EncodeToString(bs)
+	fmt.Println(q)
 }
 
-func testBase26EncodeHex() {
+func testEncodeHex() {
 
 	//s := "0000000000000000"
 	//s := "8888888888888888"
