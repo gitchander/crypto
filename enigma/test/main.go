@@ -9,6 +9,7 @@ import (
 	"github.com/gitchander/crypto/enigma"
 	"github.com/gitchander/crypto/enigma/base16"
 	"github.com/gitchander/crypto/enigma/base26"
+	"github.com/gitchander/crypto/utils/random"
 )
 
 func main() {
@@ -20,6 +21,7 @@ func main() {
 	testJoinLines()
 	testUtf8Base16()
 	testUtf8Base26()
+	testRandBytes()
 }
 
 func checkError(err error) {
@@ -97,7 +99,7 @@ func testDonitzMessage() {
 		ReflectorID: "C-thin",
 	}
 
-	ciphertext := enigma.JoinStrings([]string{
+	ciphertext := enigma.JoinStrings(
 		"DUHF TETO LANO TCTO UARB BFPM HPHG CZXT DYGA HGUF XGEW KBLK GJWL QXXT",
 		"GPJJ AVTO CKZF SLPP QIHZ FXOE BWII EKFZ LCLO AQJU LJOY HSSM BBGW HZAN",
 		"VOII PYRB RTDJ QDJJ OQKC XWDN BBTY VXLY TAPG VEAT XSON PNYN QFUD BBHH",
@@ -105,7 +107,7 @@ func testDonitzMessage() {
 		"TKHK GDNP SAKN UAGH JZSM JBMH VTRE QEDG XHLZ WIFU SKDQ VELN MIMI THBH",
 		"DBWV HDFY HJOQ IHOR TDJD BWXE MEAY XGYQ XOHF DMYU XXNO JAZR SGHP LWML",
 		"RECW WUTL RTTV LBHY OORG LGOW UXNX HMHY FAAC QEKT HSJW DUHF TETO",
-	})
+	)
 	ciphertext = trimMessageIndicator(ciphertext)
 	ciphertext = enigma.OnlyLetters(ciphertext)
 
@@ -183,7 +185,7 @@ func genCodeLines() {
 	}
 	fmt.Println("}")
 
-	outputText := enigma.OnlyLetters(enigma.JoinLines("", lines))
+	outputText := enigma.OnlyLetters(enigma.JoinLines("", lines...))
 	if inputText != outputText {
 		err := fmt.Errorf("%q != %q\n", inputText, outputText)
 		checkError(err)
@@ -200,7 +202,7 @@ func testJoinLines() {
 		"DBWV HDFY HJOQ IHOR TDJD BWXE MEAY XGYQ XOHF DMYU XXNO JAZR SGHP LWML",
 		"RECW WUTL RTTV LBHY OORG LGOW UXNX HMHY FAAC QEKT HSJW DUHF TETO",
 	}
-	text := enigma.JoinLines("\t", lines)
+	text := enigma.JoinLines("\t", lines...)
 	fmt.Print(text)
 }
 
@@ -303,4 +305,16 @@ func testUtf8Base26() {
 	resultText := string(bs)
 
 	fmt.Println("resultText:", resultText)
+}
+
+func testRandBytes() {
+	r := random.NewRandNow()
+	data := make([]byte, r.Intn(50))
+	for i := 0; i < 100; i++ {
+		bs := data[:r.Intn(len(data)+1)]
+		random.FillBytes(r, bs)
+		s := base26.EncodeToString(bs)
+		_ = s
+		// todo
+	}
 }

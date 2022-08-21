@@ -62,10 +62,10 @@ func parsePlugboard(s string) (*Plugboard, error) {
 	return &Plugboard{dr}, nil
 }
 
-func (p *Plugboard) Direct(index int) int {
+func (p *Plugboard) doDirect(index int) int {
 	return p.direct[index]
 }
 
-func (p *Plugboard) Reverse(index int) int {
+func (p *Plugboard) doReverse(index int) int {
 	return p.reverse[index]
 }

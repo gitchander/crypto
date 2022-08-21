@@ -29,7 +29,7 @@ func NewRotorByInfo(ri RotorInfo) (*Rotor, error) {
 	if err != nil {
 		return nil, fmt.Errorf("parse ring: %s", err)
 	}
-	r.SetRing(ring)
+	r.setRing(ring)
 
 	//--------------------------------------------------------------------------
 	// Parse position:
@@ -37,7 +37,7 @@ func NewRotorByInfo(ri RotorInfo) (*Rotor, error) {
 	if err != nil {
 		return nil, fmt.Errorf("parse position: %s", err)
 	}
-	r.SetPosition(position)
+	r.setPosition(position)
 
 	return r, nil
 }

@@ -100,7 +100,7 @@ func duplicateRunes(s string) (rs []rune) {
 	return rs
 }
 
-func JoinStrings(ss []string) string {
+func JoinStrings(ss ...string) string {
 	var b strings.Builder
 	for _, s := range ss {
 		b.WriteString(s)
@@ -108,7 +108,7 @@ func JoinStrings(ss []string) string {
 	return b.String()
 }
 
-func JoinLines(linePrefix string, lines []string) string {
+func JoinLines(linePrefix string, lines ...string) string {
 	var b strings.Builder
 	for _, line := range lines {
 		b.WriteString(linePrefix)
@@ -134,8 +134,8 @@ func OnlyLetters(s string) string {
 	return string(bs)
 }
 
-func LinesToText(lines []string) string {
-	s := JoinLines("", lines)
+func LinesToText(lines ...string) string {
+	s := JoinLines("", lines...)
 	s = OnlyLetters(s)
 	return strings.ToUpper(s)
 }

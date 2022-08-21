@@ -23,7 +23,7 @@ func (e *enigmaPos) Positions() string {
 	rotors := e.e.rotors
 	ls := make([]byte, len(rotors))
 	for i, r := range rotors {
-		letter, _ := indexToLetter(r.Position())
+		letter, _ := indexToLetter(r.getPosition())
 		ls[i] = letter
 	}
 	return string(ls)
@@ -42,7 +42,7 @@ func (e *enigmaPos) SetPositions(s string) {
 		if !ok {
 			panic(errInvalidLetter(letter))
 		}
-		r.SetPosition(index)
+		r.setPosition(index)
 	}
 }
 

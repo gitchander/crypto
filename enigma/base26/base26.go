@@ -94,7 +94,7 @@ func Decode(dst, src []byte) (int, error) {
 	for _, b := range src {
 		x, ok := decodeChar(b)
 		if !ok {
-			return 0, fmt.Errorf("base26: invalid byte: %#U", rune(b))
+			return j, fmt.Errorf("base26: invalid byte: %#U", rune(b))
 		}
 
 		v := int(x & mask4bit)
@@ -118,8 +118,13 @@ func Decode(dst, src []byte) (int, error) {
 	}
 
 	if bn > 0 {
+
 		// todo
-		//fmt.Printf("bn: %d, ba: %b\n", bn, ba)
+
+		// fmt.Printf("bn: %d, ba: %b\n", bn, ba)
+		// if ba != 0 {
+		// 	return j, fmt.Errorf("base26: invalid source (bits: length %d, accumulator %b)", bn, ba)
+		// }
 	}
 
 	return j, nil

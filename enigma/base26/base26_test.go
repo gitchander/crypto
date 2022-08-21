@@ -2,10 +2,70 @@ package base26
 
 import (
 	"bytes"
+	"encoding/hex"
 	"testing"
 
 	"github.com/gitchander/crypto/utils/random"
 )
+
+func TestSamples(t *testing.T) {
+
+	samples := []struct {
+		DataHex string
+		Result  string
+	}{
+		{
+			DataHex: "A0",
+			Result:  "AF",
+		},
+		{
+			DataHex: "0123456789abcdef",
+			Result:  "BYIKIHLEOKWZPO",
+		},
+		{
+			DataHex: "50",
+			Result:  "QC",
+		},
+		{
+			DataHex: "AA",
+			Result:  "KK",
+		},
+	}
+
+	for _, sample := range samples {
+
+		as, err := hex.DecodeString(sample.DataHex)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		//t.Logf("%x", as)
+
+		es := make([]byte, EncodedLenMax(len(as)))
+		n := Encode(es, as)
+		es = es[:n]
+
+		result := string(es)
+		//t.Log("result:", result)
+
+		if result != sample.Result {
+			t.Fatalf("invalid result: have %s, want %s", result, sample.Result)
+		}
+
+		bs := make([]byte, DecodedLenMax(len(es)))
+		n, err = Decode(bs, es)
+		if err != nil {
+			t.Fatal(err)
+		}
+		bs = bs[:n]
+
+		if !(bytes.Equal(as, bs)) {
+			t.Logf("%s: [%x]", "as", as)
+			t.Logf("%s: [%x]", "bs", bs)
+			t.Fatal("samples is not equal")
+		}
+	}
+}
 
 func TestRandom(t *testing.T) {
 
@@ -72,7 +132,8 @@ func TestStringRandom(t *testing.T) {
 // 	alphabet := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 // 	r := random.NewRandNow()
-// 	const n = 10
+// 	//r := random.NewRandSeed(0)
+// 	const n = 100
 // 	data := make([]byte, n)
 
 // 	for i := 0; i < 1000; i++ {
@@ -87,7 +148,8 @@ func TestStringRandom(t *testing.T) {
 // 		as := make([]byte, DecodedLenMax(len(es)))
 // 		n, err := Decode(as, es)
 // 		if err != nil {
-// 			t.Fatal(err)
+// 			continue
+// 			//t.Fatal(err)
 // 		}
 // 		as = as[:n]
 
@@ -99,8 +161,8 @@ func TestStringRandom(t *testing.T) {
 
 // 		if !(bytes.Equal(es, bs)) {
 // 			t.Logf("%s: %s", "es", es)
-// 			t.Logf("%s: [%x]", "es", es)
-// 			t.Logf("%s: [%x]", "bs", bs)
+// 			t.Logf("%s: [%x]", "as", as)
+// 			t.Logf("%s: %s", "bs", bs)
 // 			t.Fatal("samples is not equal")
 // 		}
 // 	}

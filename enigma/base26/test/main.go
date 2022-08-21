@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	// testBase26Decode()
+	testBase26Decode()
 	testBase26EncodeHex()
 }
 
@@ -20,7 +20,8 @@ func checkError(err error) {
 }
 
 func testBase26Decode() {
-	s := "NPFOMNOJBTMJGFGAPMDXCOJJZOJIMSKKMLJNMGDPGAMFDXDWH"
+	//s := "NPFOMNOJBTMJGFGAPMDXCOJJZOJIMSKKMLJNMGDPGAMFDXDWH"
+	s := "KK"
 	bs, err := base26.DecodeString(s)
 	checkError(err)
 	fmt.Printf("%x\n", bs)

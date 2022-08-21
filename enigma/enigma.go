@@ -53,20 +53,20 @@ func (e *Enigma) feed(index int) int {
 
 	e.rotate()
 
-	index = e.plugboard.Direct(index)
+	index = e.plugboard.doDirect(index)
 
 	n := len(e.rotors)
 	for i := n - 1; i >= 0; i-- {
-		index = e.rotors[i].Direct(index)
+		index = e.rotors[i].doDirect(index)
 	}
 
 	index = e.reflector.convertTable[index]
 
 	for i := 0; i < n; i++ {
-		index = e.rotors[i].Reverse(index)
+		index = e.rotors[i].doReverse(index)
 	}
 
-	index = e.plugboard.Reverse(index)
+	index = e.plugboard.doReverse(index)
 
 	return index
 }

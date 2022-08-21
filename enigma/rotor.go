@@ -46,28 +46,28 @@ func parseTurnovers(s string) ([]bool, error) {
 	return turnovers, nil
 }
 
-func (r *Rotor) Rotate() {
+func (r *Rotor) rotate() {
 	r.position = mod((r.position + 1), positions)
 }
 
-func (r *Rotor) Position() int {
+func (r *Rotor) hasTurnover() bool {
+	return r.turnovers[r.position]
+}
+
+func (r *Rotor) getPosition() int {
 	return r.position
 }
 
-func (r *Rotor) SetPosition(position int) {
+func (r *Rotor) setPosition(position int) {
 	r.position = mod(position, positions)
 }
 
-func (r *Rotor) Ring() int {
+func (r *Rotor) getRing() int {
 	return r.ring
 }
 
-func (r *Rotor) SetRing(ring int) {
+func (r *Rotor) setRing(ring int) {
 	r.ring = mod(ring, positions)
-}
-
-func (r *Rotor) HasTurnover() bool {
-	return r.turnovers[r.position]
 }
 
 func (r *Rotor) do(index int, reverse bool) int {
@@ -97,20 +97,21 @@ func (r *Rotor) doV2(index int, reverse bool) int {
 	return index
 }
 
-func (r *Rotor) Direct(index int) int {
+func (r *Rotor) doDirect(index int) int {
 	return r.do(index, false)
 }
 
-func (r *Rotor) Reverse(index int) int {
+func (r *Rotor) doReverse(index int) int {
 	return r.do(index, true)
 }
 
 func rotateRotors(rs []*Rotor) {
-	hasPrev := true // first Turnover
+	hasPrev := true // Turnover last rotor.
 	for i := len(rs) - 1; i >= 0; i-- {
-		ok := rs[i].HasTurnover()
+		r := rs[i]
+		ok := r.hasTurnover()
 		if hasPrev || ok {
-			rs[i].Rotate()
+			r.rotate()
 		}
 		hasPrev = ok
 	}
