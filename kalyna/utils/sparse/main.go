@@ -60,9 +60,9 @@ func byteIsSpace(b byte) bool {
 
 func byteToUint64Slice(data []byte) ([]uint64, error) {
 
-	const sizeOfUint64 = 8
+	const bytesPerUint64 = 8
 
-	n, rem := quoRem(len(data), sizeOfUint64)
+	n, rem := quoRem(len(data), bytesPerUint64)
 
 	if rem != 0 {
 		return nil, fmt.Errorf("invalid data size %d", len(data))
@@ -71,7 +71,7 @@ func byteToUint64Slice(data []byte) ([]uint64, error) {
 	ws := make([]uint64, n)
 	for i := range ws {
 		ws[i] = binary.LittleEndian.Uint64(data)
-		data = data[sizeOfUint64:]
+		data = data[bytesPerUint64:]
 	}
 
 	return ws, nil

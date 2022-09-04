@@ -20,8 +20,8 @@ var cipherSamples = []cipherSample{
 	{
 		id: "B.2.6-encryption",
 		config: Config{
-			BlockSize: 128,
-			KeySize:   128,
+			BlockSize: BlockSize128,
+			KeySize:   KeySize128,
 		},
 		key: []string{
 			"000102030405060708090A0B0C0D0E0F",
@@ -36,8 +36,8 @@ var cipherSamples = []cipherSample{
 	{
 		id: "B.2.6-decryption",
 		config: Config{
-			BlockSize: 128,
-			KeySize:   128,
+			BlockSize: BlockSize128,
+			KeySize:   KeySize128,
 		},
 		key: []string{
 			"0F0E0D0C0B0A09080706050403020100",
@@ -52,8 +52,8 @@ var cipherSamples = []cipherSample{
 	{
 		id: "B.2.7-encryption",
 		config: Config{
-			BlockSize: 128,
-			KeySize:   256,
+			BlockSize: BlockSize128,
+			KeySize:   KeySize256,
 		},
 		key: []string{
 			"000102030405060708090A0B0C0D0E0F",
@@ -69,8 +69,8 @@ var cipherSamples = []cipherSample{
 	{
 		id: "B.2.7-decryption",
 		config: Config{
-			BlockSize: 128,
-			KeySize:   256,
+			BlockSize: BlockSize128,
+			KeySize:   KeySize256,
 		},
 		key: []string{
 			"1F1E1D1C1B1A19181716151413121110",
@@ -86,8 +86,8 @@ var cipherSamples = []cipherSample{
 	{
 		id: "B.2.8-encryption",
 		config: Config{
-			BlockSize: 256,
-			KeySize:   256,
+			BlockSize: BlockSize256,
+			KeySize:   KeySize256,
 		},
 		key: []string{
 			"000102030405060708090A0B0C0D0E0F",
@@ -105,8 +105,8 @@ var cipherSamples = []cipherSample{
 	{
 		id: "B.2.8-decryption",
 		config: Config{
-			BlockSize: 256,
-			KeySize:   256,
+			BlockSize: BlockSize256,
+			KeySize:   KeySize256,
 		},
 		key: []string{
 			"1F1E1D1C1B1A19181716151413121110",
@@ -124,8 +124,8 @@ var cipherSamples = []cipherSample{
 	{
 		id: "B.2.9-encryption",
 		config: Config{
-			BlockSize: 256,
-			KeySize:   512,
+			BlockSize: BlockSize256,
+			KeySize:   KeySize512,
 		},
 		key: []string{
 			"000102030405060708090A0B0C0D0E0F",
@@ -145,8 +145,8 @@ var cipherSamples = []cipherSample{
 	{
 		id: "B.2.9-decryption",
 		config: Config{
-			BlockSize: 256,
-			KeySize:   512,
+			BlockSize: BlockSize256,
+			KeySize:   KeySize512,
 		},
 		key: []string{
 			"3F3E3D3C3B3A39383736353433323130",
@@ -166,8 +166,8 @@ var cipherSamples = []cipherSample{
 	{
 		id: "B.2.10-encryption",
 		config: Config{
-			BlockSize: 512,
-			KeySize:   512,
+			BlockSize: BlockSize512,
+			KeySize:   KeySize512,
 		},
 		key: []string{
 			"000102030405060708090A0B0C0D0E0F",
@@ -191,8 +191,8 @@ var cipherSamples = []cipherSample{
 	{
 		id: "B.2.10-decryption",
 		config: Config{
-			BlockSize: 512,
-			KeySize:   512,
+			BlockSize: BlockSize512,
+			KeySize:   KeySize512,
 		},
 		key: []string{
 			"3F3E3D3C3B3A39383736353433323130",
@@ -248,7 +248,7 @@ func testCipherSample(t *testing.T, v cipherSample) error {
 		return err
 	}
 
-	blockSize := v.config.BlockSize / bitsPerByte
+	blockSize := v.config.BlockSize
 	if b.BlockSize() != blockSize {
 		return fmt.Errorf("invalid blockSize: have %d, want %d",
 			b.BlockSize(), blockSize)

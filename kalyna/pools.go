@@ -6,8 +6,7 @@ import (
 
 var bytesPool = sync.Pool{
 	New: func() interface{} {
-		const maxCap = bitsPerBlock512 / bitsPerByte
-		return make([]byte, 0, maxCap)
+		return make([]byte, 0, bytesPoolSizeMax)
 	},
 }
 
@@ -23,8 +22,7 @@ func poolPutBytes(bs []byte) {
 
 var wordsPool = sync.Pool{
 	New: func() interface{} {
-		const maxCap = bitsPerBlock512 / bitsPerWord
-		return make([]uint64, 0, maxCap)
+		return make([]uint64, 0, wordsPoolSizeMax)
 	},
 }
 

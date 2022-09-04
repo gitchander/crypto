@@ -4,54 +4,6 @@ import (
 	"encoding/binary"
 )
 
-const (
-	bitsPerByte  = 8
-	bytesPerWord = 8 // uint64 - 8 bytes
-
-	bitsPerWord = bitsPerByte * bytesPerWord
-)
-
-// Block words size.
-const (
-	wordsPerBlock128 = 2
-	wordsPerBlock256 = 4
-	wordsPerBlock512 = 8
-)
-
-// Key words size.
-const (
-	wordsPerKey128 = 2
-	wordsPerKey256 = 4
-	wordsPerKey512 = 8
-)
-
-// Number of enciphering rounds size depending on key length.
-const (
-	roundsForKey128 = 10
-	roundsForKey256 = 14
-	roundsForKey512 = 18
-)
-
-// Block bits sizes.
-const (
-	bitsPerBlock128 = wordsPerBlock128 * bitsPerWord
-	bitsPerBlock256 = wordsPerBlock256 * bitsPerWord
-	bitsPerBlock512 = wordsPerBlock512 * bitsPerWord
-)
-
-// Key bits size.
-const (
-	bitsPerKey128 = wordsPerKey128 * bitsPerWord
-	bitsPerKey256 = wordsPerKey256 * bitsPerWord
-	bitsPerKey512 = wordsPerKey512 * bitsPerWord
-)
-
-const (
-	reductionPolynomial = 0x011d // x^8 + x^4 + x^3 + x^2 + 1
-
-	reductionPolynomialUint8 = uint8(reductionPolynomial & 0xff)
-)
-
 // Words
 func bytesPerWords(ws []uint64) int {
 	return len(ws) * bytesPerWord

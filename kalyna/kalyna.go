@@ -40,31 +40,31 @@ func newKalynaContext(blockSize, keySize int) (*kalynaContext, error) {
 
 	var nb, nk, rounds int
 
-	if blockSize == bitsPerBlock128 {
+	if blockSize == bytesPerBlock128 {
 		nb = wordsPerBlock128
-		if keySize == bitsPerKey128 {
+		if keySize == bytesPerKey128 {
 			nk = wordsPerKey128
 			rounds = roundsForKey128
-		} else if keySize == bitsPerKey256 {
+		} else if keySize == bytesPerKey256 {
 			nk = wordsPerKey256
 			rounds = roundsForKey256
 		} else {
 			return nil, KeySizeError(keySize)
 		}
-	} else if blockSize == bitsPerBlock256 {
+	} else if blockSize == bytesPerBlock256 {
 		nb = wordsPerBlock256
-		if keySize == bitsPerKey256 {
+		if keySize == bytesPerKey256 {
 			nk = wordsPerKey256
 			rounds = roundsForKey256
-		} else if keySize == bitsPerKey512 {
+		} else if keySize == bytesPerKey512 {
 			nk = wordsPerKey512
 			rounds = roundsForKey512
 		} else {
 			return nil, KeySizeError(keySize)
 		}
-	} else if blockSize == bitsPerBlock512 {
+	} else if blockSize == bytesPerBlock512 {
 		nb = wordsPerBlock512
-		if keySize == bitsPerKey512 {
+		if keySize == bytesPerKey512 {
 			nk = wordsPerKey512
 			rounds = roundsForKey512
 		} else {

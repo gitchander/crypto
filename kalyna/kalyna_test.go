@@ -17,8 +17,8 @@ var samples = []sample{
 	{
 		id: "B.2.6-encryption",
 		config: Config{
-			BlockSize: 128,
-			KeySize:   128,
+			BlockSize: BlockSize128,
+			KeySize:   KeySize128,
 		},
 		key: []uint64{
 			0x0706050403020100, 0x0f0e0d0c0b0a0908,
@@ -33,8 +33,8 @@ var samples = []sample{
 	{
 		id: "B.2.6-decryption",
 		config: Config{
-			BlockSize: 128,
-			KeySize:   128,
+			BlockSize: BlockSize128,
+			KeySize:   KeySize128,
 		},
 		key: []uint64{
 			0x08090a0b0c0d0e0f, 0x0001020304050607,
@@ -49,8 +49,8 @@ var samples = []sample{
 	{
 		id: "B.2.7-encryption",
 		config: Config{
-			BlockSize: 128,
-			KeySize:   256,
+			BlockSize: BlockSize128,
+			KeySize:   KeySize256,
 		},
 		key: []uint64{
 			0x0706050403020100, 0x0f0e0d0c0b0a0908,
@@ -66,8 +66,8 @@ var samples = []sample{
 	{
 		id: "B.2.7-decryption",
 		config: Config{
-			BlockSize: 128,
-			KeySize:   256,
+			BlockSize: BlockSize128,
+			KeySize:   KeySize256,
 		},
 		key: []uint64{
 			0x18191a1b1c1d1e1f, 0x1011121314151617,
@@ -83,8 +83,8 @@ var samples = []sample{
 	{
 		id: "B.2.8-encryption",
 		config: Config{
-			BlockSize: 256,
-			KeySize:   256,
+			BlockSize: BlockSize256,
+			KeySize:   KeySize256,
 		},
 		key: []uint64{
 			0x0706050403020100, 0x0f0e0d0c0b0a0908,
@@ -102,8 +102,8 @@ var samples = []sample{
 	{
 		id: "B.2.8-decryption",
 		config: Config{
-			BlockSize: 256,
-			KeySize:   256,
+			BlockSize: BlockSize256,
+			KeySize:   KeySize256,
 		},
 		key: []uint64{
 			0x18191a1b1c1d1e1f, 0x1011121314151617,
@@ -121,8 +121,8 @@ var samples = []sample{
 	{
 		id: "B.2.9-encryption",
 		config: Config{
-			BlockSize: 256,
-			KeySize:   512,
+			BlockSize: BlockSize256,
+			KeySize:   KeySize512,
 		},
 		key: []uint64{
 			0x0706050403020100, 0x0f0e0d0c0b0a0908,
@@ -142,8 +142,8 @@ var samples = []sample{
 	{
 		id: "B.2.9-decryption",
 		config: Config{
-			BlockSize: 256,
-			KeySize:   512,
+			BlockSize: BlockSize256,
+			KeySize:   KeySize512,
 		},
 		key: []uint64{
 			0x38393a3b3c3d3e3f, 0x3031323334353637,
@@ -163,8 +163,8 @@ var samples = []sample{
 	{
 		id: "B.2.10-encryption",
 		config: Config{
-			BlockSize: 512,
-			KeySize:   512,
+			BlockSize: BlockSize512,
+			KeySize:   KeySize512,
 		},
 		key: []uint64{
 			0x0706050403020100, 0x0f0e0d0c0b0a0908,
@@ -188,8 +188,8 @@ var samples = []sample{
 	{
 		id: "B.2.10-decryption",
 		config: Config{
-			BlockSize: 512,
-			KeySize:   512,
+			BlockSize: BlockSize512,
+			KeySize:   KeySize512,
 		},
 		key: []uint64{
 			0x38393a3b3c3d3e3f, 0x3031323334353637,

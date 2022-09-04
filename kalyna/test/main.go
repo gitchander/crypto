@@ -21,8 +21,8 @@ func checkError(err error) {
 func testCipher() {
 
 	config := kalyna.Config{
-		BlockSize: 128,
-		KeySize:   128,
+		BlockSize: kalyna.BlockSize128,
+		KeySize:   kalyna.KeySize128,
 	}
 
 	key, err := hex.DecodeString("000102030405060708090A0B0C0D0E0F")

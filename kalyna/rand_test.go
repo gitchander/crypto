@@ -11,24 +11,24 @@ import (
 
 var configs = []Config{
 	{
-		BlockSize: 128,
-		KeySize:   128,
+		BlockSize: BlockSize128,
+		KeySize:   KeySize128,
 	},
 	{
-		BlockSize: 128,
-		KeySize:   256,
+		BlockSize: BlockSize128,
+		KeySize:   KeySize256,
 	},
 	{
-		BlockSize: 256,
-		KeySize:   256,
+		BlockSize: BlockSize256,
+		KeySize:   KeySize256,
 	},
 	{
-		BlockSize: 256,
-		KeySize:   512,
+		BlockSize: BlockSize256,
+		KeySize:   KeySize512,
 	},
 	{
-		BlockSize: 512,
-		KeySize:   512,
+		BlockSize: BlockSize512,
+		KeySize:   KeySize512,
 	},
 }
 
@@ -71,7 +71,7 @@ func testSeedConfig(seed int64, c Config) error {
 
 	r := random.NewRandSeed(seed)
 
-	keySize := c.KeySize / bitsPerByte
+	keySize := c.KeySize
 	key := make([]byte, keySize)
 	random.FillBytes(r, key)
 

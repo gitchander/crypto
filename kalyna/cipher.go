@@ -17,8 +17,8 @@ import (
 
 // Kalyna
 type Config struct {
-	BlockSize int // Block size in bits.
-	KeySize   int // Key size in bits.
+	BlockSize int // Block size in bytes.
+	KeySize   int // Key size in bytes.
 }
 
 func (c Config) NewCipher(key []byte) (cipher.Block, error) {
@@ -30,13 +30,16 @@ func (c Config) NewCipher(key []byte) (cipher.Block, error) {
 
 	// Init key
 	{
-		wantKS := c.KeySize / bitsPerByte
-		if len(key) != wantKS {
+		var (
+			haveKeySize = len(key)
+			wantKeySize = c.KeySize
+		)
+		if haveKeySize != wantKeySize {
 			return nil, fmt.Errorf("kalyna: invalid key size: have %d, want %d",
-				len(key), wantKS)
+				haveKeySize, wantKeySize)
 		}
 
-		ws := make([]uint64, c.KeySize/bitsPerWord)
+		ws := make([]uint64, c.KeySize/bytesPerWord)
 		bytesToWords(ws, key)
 		err = k.KeyExpand(ws)
 		if err != nil {
@@ -44,11 +47,11 @@ func (c Config) NewCipher(key []byte) (cipher.Block, error) {
 		}
 	}
 
-	nb := c.BlockSize / bitsPerWord
+	nb := c.BlockSize / bytesPerWord
 
 	b := &block{
 		k:          k,
-		blockSize:  c.BlockSize / bitsPerByte,
+		blockSize:  c.BlockSize,
 		plaintext:  make([]uint64, nb),
 		ciphertext: make([]uint64, nb),
 	}

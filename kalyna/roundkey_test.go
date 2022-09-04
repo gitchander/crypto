@@ -16,8 +16,8 @@ var roundKeySamples = []roundKeySample{
 	{
 		id: "B.2.1",
 		config: Config{
-			BlockSize: 128,
-			KeySize:   128,
+			BlockSize: BlockSize128,
+			KeySize:   KeySize128,
 		},
 		key: []uint64{
 			0x0706050403020100, 0x0f0e0d0c0b0a0908,
@@ -61,8 +61,8 @@ var roundKeySamples = []roundKeySample{
 	{
 		id: "B.2.2",
 		config: Config{
-			BlockSize: 128,
-			KeySize:   256,
+			BlockSize: BlockSize128,
+			KeySize:   KeySize256,
 		},
 		key: []uint64{
 			0x0706050403020100, 0x0f0e0d0c0b0a0908,
@@ -119,8 +119,8 @@ var roundKeySamples = []roundKeySample{
 	{
 		id: "B.2.3",
 		config: Config{
-			BlockSize: 256,
-			KeySize:   256,
+			BlockSize: BlockSize256,
+			KeySize:   KeySize256,
 		},
 		key: []uint64{
 			0x0706050403020100, 0x0f0e0d0c0b0a0908,
@@ -192,8 +192,8 @@ var roundKeySamples = []roundKeySample{
 	{
 		id: "B.2.4",
 		config: Config{
-			BlockSize: 256,
-			KeySize:   512,
+			BlockSize: BlockSize256,
+			KeySize:   KeySize512,
 		},
 		key: []uint64{
 			0x0706050403020100, 0x0f0e0d0c0b0a0908,
@@ -283,8 +283,8 @@ var roundKeySamples = []roundKeySample{
 	{
 		id: "B.2.5",
 		config: Config{
-			BlockSize: 512,
-			KeySize:   512,
+			BlockSize: BlockSize512,
+			KeySize:   KeySize512,
 		},
 		key: []uint64{
 			0x0706050403020100, 0x0f0e0d0c0b0a0908,
