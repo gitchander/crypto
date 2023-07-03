@@ -21,12 +21,8 @@ const KeySize = 32 // Key size in bytes.
 
 type block struct {
 	we *wordEncoder
-
-	encKeys []word
-	decKeys []word
-
+	fn *feistelNetwork
 	rb *roundBlock
-	rf roundFunc
 }
 
 func NewCipher(key []byte) (cipher.Block, error) {
@@ -42,20 +38,15 @@ func NewCipherRT(rt ReplaceTable, key []byte) (cipher.Block, error) {
 
 	we := defaultWordEncoder
 
-	encKeys, err := expandKeyMagma(we, key)
+	ks, err := expandKeyMagma(we, key)
 	if err != nil {
 		return nil, err
 	}
 
-	decKeys := cloneWords(encKeys)
-	reverseWords(decKeys)
-
 	b := &block{
-		we:      we,
-		encKeys: encKeys,
-		decKeys: decKeys,
-		rb:      new(roundBlock),
-		rf:      roundFuncMagma(&rt),
+		we: we,
+		fn: newFeistelNetwork(ks, roundFuncMagma(&rt)),
+		rb: new(roundBlock),
 	}
 
 	return b, nil
@@ -73,7 +64,7 @@ func expandKeyMagma(we *wordEncoder, key []byte) ([]word, error) {
 		key = key[4:]
 	}
 
-	var ks []word
+	ks := make([]word, 0, 8*4)
 
 	for j := 0; j < 3; j++ {
 		for i := 0; i < 8; i++ {
@@ -121,7 +112,7 @@ func (b *block) Encrypt(dst, src []byte) {
 	}
 
 	b.we.getBlock(src, b.rb)
-	encrypt(b.rb, b.encKeys, b.rf)
+	b.fn.encrypt(b.rb)
 	b.we.putBlock(dst, b.rb)
 }
 
@@ -136,6 +127,6 @@ func (b *block) Decrypt(dst, src []byte) {
 	}
 
 	b.we.getBlock(src, b.rb)
-	decrypt(b.rb, b.decKeys, b.rf)
+	b.fn.decrypt(b.rb)
 	b.we.putBlock(dst, b.rb)
 }

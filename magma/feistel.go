@@ -14,21 +14,44 @@ func (p *roundBlock) Swap() {
 // round function
 type roundFunc func(k, r word) word
 
-func round(b *roundBlock, k word, rf roundFunc) {
-	b.L = wordXOR(b.L, rf(k, b.R))
+type feistelNetwork struct {
+	rf      roundFunc
+	encKeys []word
+	decKeys []word
+}
+
+func newFeistelNetwork(ks []word, rf roundFunc) *feistelNetwork {
+
+	var (
+		encKeys = cloneWords(ks)
+		decKeys = cloneWords(ks)
+	)
+	reverseWords(decKeys)
+
+	return &feistelNetwork{
+		rf:      rf,
+		encKeys: encKeys,
+		decKeys: decKeys,
+	}
+}
+
+func (p *feistelNetwork) round(k word, b *roundBlock) {
+	b.L = b.L ^ p.rf(k, b.R) // XOR(L, F(K, R))
 	b.Swap()
 }
 
-func encrypt(b *roundBlock, ks []word, rf roundFunc) {
+func (p *feistelNetwork) encrypt(b *roundBlock) {
+	ks := p.encKeys
 	for _, k := range ks {
-		round(b, k, rf)
+		p.round(k, b)
 	}
 	b.Swap()
 }
 
-func decrypt(b *roundBlock, ks []word, rf roundFunc) {
+func (p *feistelNetwork) decrypt(b *roundBlock) {
+	ks := p.decKeys
 	for _, k := range ks {
-		round(b, k, rf)
+		p.round(k, b)
 	}
 	b.Swap()
 }

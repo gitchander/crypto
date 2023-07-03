@@ -6,30 +6,25 @@ import (
 )
 
 func NewCipher(key []byte) (cipher.Block, error) {
-	return newBlockCipher(key)
+	ks, err := expandKey(key, bigEndian)
+	if err != nil {
+		return nil, err
+	}
+	return newBlockCipher(ks, RoundFuncXOR)
 }
 
 type blockCipher struct {
 	we *wordEncoder
-	ks []Word
-	rb *roundBlock
-	rf RoundFunc
+	fn *FeistelNetwork[Word]
+	rb *RoundBlock[Word]
 }
 
-func newBlockCipher(key []byte) (cipher.Block, error) {
-
+func newBlockCipher(ks []Word, rf RoundFunc[Word]) (cipher.Block, error) {
 	we := bigEndian
-
-	ks, err := expandKey(key, we)
-	if err != nil {
-		return nil, err
-	}
-
 	block := &blockCipher{
 		we: we,
-		ks: ks,
-		rb: new(roundBlock),
-		rf: RoundFuncXOR,
+		fn: NewFeistelNetwork(ks, rf),
+		rb: new(RoundBlock[Word]),
 	}
 
 	return block, nil
@@ -58,9 +53,9 @@ func (p *blockCipher) Encrypt(dst, src []byte) {
 		panic(err)
 	}
 
-	writeBlock(p.rb, p.we, src)
-	encrypt(p.rb, p.ks, p.rf)
-	readBlock(p.rb, p.we, dst)
+	p.we.getBlock(src, p.rb)
+	p.fn.Encrypt(p.rb)
+	p.we.putBlock(dst, p.rb)
 }
 
 func (p *blockCipher) Decrypt(dst, src []byte) {
@@ -70,7 +65,7 @@ func (p *blockCipher) Decrypt(dst, src []byte) {
 		panic(err)
 	}
 
-	writeBlock(p.rb, p.we, src)
-	decrypt(p.rb, p.ks, p.rf)
-	readBlock(p.rb, p.we, dst)
+	p.we.getBlock(src, p.rb)
+	p.fn.Decrypt(p.rb)
+	p.we.putBlock(dst, p.rb)
 }

@@ -24,17 +24,15 @@ func NewCipherMagmaSBox(key []byte, sbox SBoxMagma) (cipher.Block, error) {
 		return nil, err
 	}
 
-	block := &blockCipher{
-		we: we,
-		ks: ks,
-		rb: new(roundBlock),
-		rf: roundFuncMagma(&sbox),
+	block, err := newBlockCipher(ks, roundFuncMagma(&sbox))
+	if err != nil {
+		return nil, err
 	}
 
 	return block, nil
 }
 
-func roundFuncMagma(sbox *SBoxMagma) RoundFunc {
+func roundFuncMagma(sbox *SBoxMagma) RoundFunc[Word] {
 	return func(k, r Word) Word {
 		s := k + r
 		s = substituteMagma(sbox, s)
