@@ -9,15 +9,18 @@ type ReflectorConfig struct {
 }
 
 type Reflector struct {
-	convertTable
+	ct coupleTable
 }
 
 func NewReflector(rc ReflectorConfig) (*Reflector, error) {
-	dr, err := parseWiring(rc.Wiring)
+	ct, err := parseWiring(rc.Wiring)
 	if err != nil {
 		return nil, err
 	}
-	return &Reflector{convertTable: dr.direct}, nil
+	r := &Reflector{
+		ct: ct,
+	}
+	return r, nil
 }
 
 func NewReflectorByID(id string) (*Reflector, error) {
@@ -26,4 +29,8 @@ func NewReflectorByID(id string) (*Reflector, error) {
 		return nil, fmt.Errorf("invalid reflector id %q", id)
 	}
 	return NewReflector(rc)
+}
+
+func (r *Reflector) do(index int) int {
+	return r.ct.forwardTable[index]
 }

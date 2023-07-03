@@ -27,7 +27,7 @@ func NewStreamCipher(b cipher.Block, syn []byte) (cipher.Stream, error) {
 
 	sc := &streamCipher{
 		b:        b,
-		we:       newWordEncoder(),
+		we:       defaultWordEncoder,
 		s:        new(roundBlock),
 		out:      make([]byte, size),
 		outIndex: 0,
@@ -35,7 +35,7 @@ func NewStreamCipher(b cipher.Block, syn []byte) (cipher.Stream, error) {
 
 	synEnc := make([]byte, size)
 	b.Encrypt(synEnc, syn)
-	readBlock(sc.s, sc.we, synEnc)
+	sc.we.getBlock(synEnc, sc.s)
 
 	sc.nextFill()
 
@@ -49,7 +49,7 @@ func (sc *streamCipher) nextFill() {
 	s.R = s.R + c0
 	s.L = word(add_mod32m1(uint32(s.L), c1))
 
-	writeBlock(sc.s, sc.we, sc.out)
+	sc.we.putBlock(sc.out, sc.s)
 
 	sc.b.Encrypt(sc.out, sc.out)
 	sc.outIndex = 0

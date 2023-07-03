@@ -57,7 +57,7 @@ func sboxesTransform(ws []uint64, sboxes *[4][256]uint8) {
 	}
 }
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 // subBytes substitutes each byte of the cipher state using corresponding S-Boxes.
 func subBytes(ws []uint64) {
 	sboxesTransform(ws, &sboxesEnc)

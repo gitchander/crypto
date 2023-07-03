@@ -39,7 +39,7 @@ var RT3 = ReplaceTable{
 	{0xC, 0x6, 0x5, 0x2, 0xB, 0x0, 0x9, 0xD, 0x3, 0xE, 0x7, 0xA, 0xF, 0x4, 0x1, 0x8},
 }
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 func checkValidReplaceTable(rt ReplaceTable) error {
 
 	var x [16]int
@@ -70,7 +70,7 @@ func checkValidReplaceTable(rt ReplaceTable) error {
 	return nil
 }
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 type replacer interface {
 	replace(uint32) uint32
 }
@@ -83,7 +83,7 @@ func makeReplacer(rt ReplaceTable) replacer {
 	}
 }
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 type replaceTable8x16 [8][16]byte
 
 func makeReplaceTable8x16(rt ReplaceTable) replacer {
@@ -106,7 +106,7 @@ func replaceByTable8x16(rt *replaceTable8x16, s0 uint32) (s1 uint32) {
 	return s1
 }
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 type replaceTable4x256 [4][256]byte
 
 func makeReplaceTable4x256(rt ReplaceTable) replacer {

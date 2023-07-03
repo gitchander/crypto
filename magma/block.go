@@ -21,7 +21,10 @@ const KeySize = 32 // Key size in bytes.
 
 type block struct {
 	we *wordEncoder
-	ks []word
+
+	encKeys []word
+	decKeys []word
+
 	rb *roundBlock
 	rf roundFunc
 }
@@ -37,24 +40,28 @@ func NewCipherRT(rt ReplaceTable, key []byte) (cipher.Block, error) {
 		return nil, err
 	}
 
-	we := newWordEncoder()
+	we := defaultWordEncoder
 
-	ks, err := expandKeyMagma(key, we)
+	encKeys, err := expandKeyMagma(we, key)
 	if err != nil {
 		return nil, err
 	}
 
+	decKeys := cloneWords(encKeys)
+	reverseWords(decKeys)
+
 	b := &block{
-		we: we,
-		ks: ks,
-		rb: new(roundBlock),
-		rf: roundFuncMagma(&rt),
+		we:      we,
+		encKeys: encKeys,
+		decKeys: decKeys,
+		rb:      new(roundBlock),
+		rf:      roundFuncMagma(&rt),
 	}
 
 	return b, nil
 }
 
-func expandKeyMagma(key []byte, we *wordEncoder) ([]word, error) {
+func expandKeyMagma(we *wordEncoder, key []byte) ([]word, error) {
 
 	if len(key) != KeySize {
 		return nil, ErrorKeyLen
@@ -113,9 +120,9 @@ func (b *block) Encrypt(dst, src []byte) {
 		panic("magma: output not full block")
 	}
 
-	writeBlock(b.rb, b.we, src)
-	encrypt(b.rb, b.ks, b.rf)
-	readBlock(b.rb, b.we, dst)
+	b.we.getBlock(src, b.rb)
+	encrypt(b.rb, b.encKeys, b.rf)
+	b.we.putBlock(dst, b.rb)
 }
 
 func (b *block) Decrypt(dst, src []byte) {
@@ -128,7 +135,7 @@ func (b *block) Decrypt(dst, src []byte) {
 		panic("magma: output not full block")
 	}
 
-	writeBlock(b.rb, b.we, src)
-	decrypt(b.rb, b.ks, b.rf)
-	readBlock(b.rb, b.we, dst)
+	b.we.getBlock(src, b.rb)
+	decrypt(b.rb, b.decKeys, b.rf)
+	b.we.putBlock(dst, b.rb)
 }

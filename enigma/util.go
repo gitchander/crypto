@@ -46,38 +46,38 @@ func parseLettersN(s string, bs []int) error {
 }
 
 // mapping, wiring
-func parseWiring(wiring string) (dirRev, error) {
+func parseWiring(wiring string) (coupleTable, error) {
 
-	var dr dirRev
+	var ct coupleTable
 	err := ValidateWiring(wiring)
 	if err != nil {
-		return dr, err
+		return ct, err
 	}
 
 	bs := []byte(wiring)
 	if len(bs) != positions {
-		return dr, fmt.Errorf("wiring has invalid length %d", len(bs))
+		return ct, fmt.Errorf("wiring has invalid length %d", len(bs))
 	}
 	cs := make([]int, positions)
 	for i, b := range bs {
 		j, ok := letterToIndex(b)
 		if !ok {
-			return dr, fmt.Errorf("wiring has invalid letter %#U", b)
+			return ct, fmt.Errorf("wiring has invalid letter %#U", b)
 		}
-		dr.direct[i] = j
-		dr.reverse[j] = i
+		ct.forwardTable[i] = j
+		ct.backwardTable[j] = i
 		cs[j]++
 	}
 	for i, c := range cs {
 		if c == 0 {
 			letter, _ := indexToLetter(i)
-			return dr, fmt.Errorf("wiring has not letter %q", letter)
+			return ct, fmt.Errorf("wiring has not letter %q", letter)
 		} else if c > 1 {
 			letter, _ := indexToLetter(i)
-			return dr, fmt.Errorf("wiring has more than one letter %q", letter)
+			return ct, fmt.Errorf("wiring has more than one letter %q", letter)
 		}
 	}
-	return dr, nil
+	return ct, nil
 }
 
 func mod(a, b int) int {

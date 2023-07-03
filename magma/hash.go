@@ -7,6 +7,7 @@ import (
 
 type digest struct {
 	b        cipher.Block
+	we       *wordEncoder
 	out      []byte
 	src      []byte
 	srcIndex int
@@ -15,6 +16,7 @@ type digest struct {
 func NewHash(b cipher.Block) hash.Hash64 {
 	return &digest{
 		b:   b,
+		we:  defaultWordEncoder,
 		out: make([]byte, b.BlockSize()),
 		src: make([]byte, b.BlockSize()),
 	}
@@ -73,7 +75,7 @@ func (d *digest) Sum(in []byte) []byte {
 
 func (d *digest) Sum64() uint64 {
 	hash := d.checkSum()
-	return byteOrder.Uint64(hash)
+	return d.we.byteOrder.Uint64(hash)
 }
 
 func (d *digest) Reset() {

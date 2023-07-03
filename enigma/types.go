@@ -12,7 +12,9 @@ const (
 
 type convertTable [positions]int
 
-type dirRev struct {
-	direct  convertTable
-	reverse convertTable
+// coupleTable - forward and backward table.
+
+type coupleTable struct {
+	forwardTable  convertTable
+	backwardTable convertTable
 }

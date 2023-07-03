@@ -36,7 +36,7 @@ func letterToIndexSlow(letter byte) (index int, ok bool) {
 	return 0, false
 }
 
-//--------------------------------------
+// --------------------------------------
 // bitwise operators:
 // a | b  - bitwise OR
 // a & b  - bitwise AND
@@ -44,7 +44,7 @@ func letterToIndexSlow(letter byte) (index int, ok bool) {
 // a << b - bitwise left shift
 // a >> b - bitwise right shift
 // a &^ b - bitwise AND NOT
-//--------------------------------------
+// --------------------------------------
 // Letter to index
 func letterToIndex(letter byte) (index int, ok bool) {
 	x := tableIndexes[letter]

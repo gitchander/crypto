@@ -6,7 +6,7 @@ type RotorConfig struct {
 }
 
 type Rotor struct {
-	dirRev
+	ct        coupleTable
 	turnovers []bool
 
 	// Offset
@@ -17,7 +17,7 @@ type Rotor struct {
 
 func NewRotor(rc RotorConfig) (*Rotor, error) {
 
-	dr, err := parseWiring(rc.Wiring)
+	ct, err := parseWiring(rc.Wiring)
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +28,7 @@ func NewRotor(rc RotorConfig) (*Rotor, error) {
 	}
 
 	r := &Rotor{
-		dirRev:    dr,
+		ct:        ct,
 		turnovers: turnovers,
 	}
 	return r, nil
@@ -70,38 +70,38 @@ func (r *Rotor) setRing(ring int) {
 	r.ring = mod(ring, positions)
 }
 
-func (r *Rotor) do(index int, reverse bool) int {
-	//return r.doV1(index, reverse)
-	return r.doV2(index, reverse)
-}
-
-func (r *Rotor) doV1(index int, reverse bool) int {
+func (r *Rotor) doV1(index int, backward bool) int {
 	index = mod((index - r.ring + r.position), positions)
-	if reverse {
-		index = r.reverse[index]
+	if backward {
+		index = r.ct.backwardTable[index]
 	} else {
-		index = r.direct[index]
+		index = r.ct.forwardTable[index]
 	}
 	index = mod((index + r.ring - r.position), positions)
 	return index
 }
 
-func (r *Rotor) doV2(index int, reverse bool) int {
+func (r *Rotor) doV2(index int, backward bool) int {
 	index = indexModules[(index - r.ring + r.position + positions)]
-	if reverse {
-		index = r.reverse[index]
+	if backward {
+		index = r.ct.backwardTable[index]
 	} else {
-		index = r.direct[index]
+		index = r.ct.forwardTable[index]
 	}
 	index = indexModules[(index + r.ring - r.position + positions)]
 	return index
 }
 
-func (r *Rotor) doDirect(index int) int {
+func (r *Rotor) do(index int, backward bool) int {
+	//return r.doV1(index, backward)
+	return r.doV2(index, backward)
+}
+
+func (r *Rotor) doForward(index int) int {
 	return r.do(index, false)
 }
 
-func (r *Rotor) doReverse(index int) int {
+func (r *Rotor) doBackward(index int) int {
 	return r.do(index, true)
 }
 

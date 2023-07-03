@@ -20,18 +20,6 @@ func decodeChar(b byte) (digit int, ok bool) {
 	return 0, false
 }
 
-func encodedLenMin(x int) int { return x * 5 / 4 } // x * 1.25
-func encodedLenMax(x int) int { return x * 2 }     // x * 2.0
-
-func decodedLenMin(x int) int { return x / 2 }     // x * 0.5
-func decodedLenMax(x int) int { return x * 4 / 5 } // x * 0.8
-
-// EncodedLen
-func EncodedLenMax(x int) int { return x * 2 }
-
-// DecodedLen
-func DecodedLenMax(x int) int { return x * 4 / 5 }
-
 func Encode(dst, src []byte) int {
 
 	j := 0
@@ -114,16 +102,4 @@ func Decode(dst, src []byte) (int, error) {
 	}
 
 	return j, nil
-}
-
-func EncodeToString(src []byte) string {
-	dst := make([]byte, EncodedLenMax(len(src)))
-	n := Encode(dst, src)
-	return string(dst[:n])
-}
-
-func DecodeString(s string) ([]byte, error) {
-	src := []byte(s)
-	n, err := Decode(src, src)
-	return src[:n], err
 }

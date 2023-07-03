@@ -6,7 +6,7 @@ import (
 )
 
 type Plugboard struct {
-	dirRev
+	coupleTable
 }
 
 func NewPlugboard(s string) (*Plugboard, error) {
@@ -20,13 +20,13 @@ func parsePlugboard(s string) (*Plugboard, error) {
 		return nil, err
 	}
 
-	var dr dirRev
+	var ct coupleTable
 	for i := 0; i < positions; i++ {
-		dr.direct[i] = i
-		dr.reverse[i] = i
+		ct.forwardTable[i] = i
+		ct.backwardTable[i] = i
 	}
 	if s == "" {
-		return &Plugboard{dr}, nil
+		return &Plugboard{ct}, nil
 	}
 
 	uniqueMap := make(map[byte]struct{})
@@ -53,19 +53,19 @@ func parsePlugboard(s string) (*Plugboard, error) {
 			b = xs[1]
 		)
 
-		dr.direct[a] = b
-		dr.direct[b] = a
+		ct.forwardTable[a] = b
+		ct.forwardTable[b] = a
 
-		dr.reverse[a] = b
-		dr.reverse[b] = a
+		ct.backwardTable[a] = b
+		ct.backwardTable[b] = a
 	}
-	return &Plugboard{dr}, nil
+	return &Plugboard{ct}, nil
 }
 
-func (p *Plugboard) doDirect(index int) int {
-	return p.direct[index]
+func (p *Plugboard) doForward(index int) int {
+	return p.forwardTable[index]
 }
 
-func (p *Plugboard) doReverse(index int) int {
-	return p.reverse[index]
+func (p *Plugboard) doBackward(index int) int {
+	return p.backwardTable[index]
 }

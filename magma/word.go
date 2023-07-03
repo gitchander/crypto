@@ -17,10 +17,35 @@ func wordShift11(w word) word {
 }
 
 //------------------------------------------------------------------------------
+
+func cloneWords(a []word) []word {
+	b := make([]word, len(a))
+	copy(b, a)
+	return b
+}
+
+func reverseWords(a []word) {
+	i, j := 0, (len(a) - 1)
+	for i < j {
+		a[i], a[j] = a[j], a[i]
+		i, j = i+1, j-1
+	}
+}
+
+//------------------------------------------------------------------------------
+
 // byteOrder
 type wordEncoder struct {
 	byteOrder binary.ByteOrder
 }
+
+func newWordEncoder_(byteOrder binary.ByteOrder) *wordEncoder {
+	return &wordEncoder{
+		byteOrder: byteOrder,
+	}
+}
+
+var defaultWordEncoder = newWordEncoder_(binary.LittleEndian)
 
 func (we *wordEncoder) getWord(b []byte) word {
 	return word(we.byteOrder.Uint32(b))
@@ -30,17 +55,12 @@ func (we *wordEncoder) putWord(b []byte, w word) {
 	we.byteOrder.PutUint32(b, uint32(w))
 }
 
-var (
-	byteOrder = binary.LittleEndian
-)
-
-func newWordEncoder() *wordEncoder {
-	return &wordEncoder{
-		byteOrder: byteOrder,
-	}
+func (we *wordEncoder) getBlock(data []byte, p *roundBlock) {
+	p.R = we.getWord(data[0*bytesPerWord:])
+	p.L = we.getWord(data[1*bytesPerWord:])
 }
 
-// var (
-// 	bigEndian    = &wordEncoder{order: binary.BigEndian}
-// 	littleEndian = &wordEncoder{order: binary.LittleEndian}
-// )
+func (we *wordEncoder) putBlock(data []byte, p *roundBlock) {
+	we.putWord(data[0*bytesPerWord:], p.R)
+	we.putWord(data[1*bytesPerWord:], p.L)
+}
