@@ -75,12 +75,7 @@ func (b *block) BlockSize() int {
 
 func (b *block) Encrypt(dst, src []byte) {
 
-	if len(src) < b.blockSize {
-		panic("kalyna: input not full block")
-	}
-	if len(dst) < b.blockSize {
-		panic("kalyna: output not full block")
-	}
+	checkBuffersSize(dst, src, b.blockSize)
 
 	bytesToWords(b.plaintext, src)
 	b.k.Encipher(b.plaintext, b.ciphertext)
@@ -89,14 +84,18 @@ func (b *block) Encrypt(dst, src []byte) {
 
 func (b *block) Decrypt(dst, src []byte) {
 
-	if len(src) < b.blockSize {
-		panic("kalyna: input not full block")
-	}
-	if len(dst) < b.blockSize {
-		panic("kalyna: output not full block")
-	}
+	checkBuffersSize(dst, src, b.blockSize)
 
 	bytesToWords(b.ciphertext, src)
 	b.k.Decipher(b.ciphertext, b.plaintext)
 	wordsToBytes(b.plaintext, dst)
+}
+
+func checkBuffersSize(dst, src []byte, blockSize int) {
+	if len(src) < blockSize {
+		panic("kalyna: input not full block")
+	}
+	if len(dst) < blockSize {
+		panic("kalyna: output not full block")
+	}
 }

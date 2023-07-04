@@ -2,6 +2,8 @@ package magma
 
 import (
 	"crypto/cipher"
+
+	"github.com/gitchander/crypto/feistel"
 )
 
 const (
@@ -12,7 +14,7 @@ const (
 type streamCipher struct {
 	b        cipher.Block
 	we       *wordEncoder
-	s        *roundBlock
+	s        *feistel.RoundBlock[word]
 	out      []byte
 	outIndex int
 }
@@ -28,7 +30,7 @@ func NewStreamCipher(b cipher.Block, syn []byte) (cipher.Stream, error) {
 	sc := &streamCipher{
 		b:        b,
 		we:       defaultWordEncoder,
-		s:        new(roundBlock),
+		s:        new(feistel.RoundBlock[word]),
 		out:      make([]byte, size),
 		outIndex: 0,
 	}

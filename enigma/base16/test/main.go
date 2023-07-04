@@ -19,8 +19,7 @@ func checkError(err error) {
 }
 
 func testBase16Bytes() {
-	//text1 := "Hello, World!"
-	text1 := "Привет, Мир!"
+	text1 := "Hello, World!"
 	src := []byte(text1)
 	dst := make([]byte, base16.EncodedLen(len(src)))
 	base16.Encode(dst, src)
@@ -32,7 +31,7 @@ func testBase16Bytes() {
 }
 
 func testBase16String() {
-	text1 := "Привет, Мир!"
+	text1 := "Hello, World!"
 	src := []byte(text1)
 	s := base16.EncodeToString(src)
 	fmt.Println(s)

@@ -2,6 +2,8 @@ package magma
 
 import (
 	"crypto/cipher"
+
+	"github.com/gitchander/crypto/feistel"
 )
 
 // GOST block cipher (Magma)
@@ -21,8 +23,8 @@ const KeySize = 32 // Key size in bytes.
 
 type block struct {
 	we *wordEncoder
-	fn *feistelNetwork
-	rb *roundBlock
+	fc *feistel.Cipher[word]
+	rb *feistel.RoundBlock[word]
 }
 
 func NewCipher(key []byte) (cipher.Block, error) {
@@ -45,8 +47,8 @@ func NewCipherRT(rt ReplaceTable, key []byte) (cipher.Block, error) {
 
 	b := &block{
 		we: we,
-		fn: newFeistelNetwork(ks, roundFuncMagma(&rt)),
-		rb: new(roundBlock),
+		fc: feistel.NewCipher(ks, roundFuncMagma(&rt)),
+		rb: new(feistel.RoundBlock[word]),
 	}
 
 	return b, nil
@@ -78,7 +80,7 @@ func expandKeyMagma(we *wordEncoder, key []byte) ([]word, error) {
 	return ks, nil
 }
 
-func roundFuncMagma(rt *ReplaceTable) roundFunc {
+func roundFuncMagma(rt *ReplaceTable) feistel.RoundFunc[word] {
 	return func(k, r word) word {
 		s := k + r
 		s = substituteMagma(rt, s)
@@ -103,30 +105,27 @@ func (block) BlockSize() int {
 
 func (b *block) Encrypt(dst, src []byte) {
 
-	if len(src) < blockSize {
-		panic("magma: input not full block")
-	}
-
-	if len(dst) < blockSize {
-		panic("magma: output not full block")
-	}
+	checkBuffersSize(dst, src, blockSize)
 
 	b.we.getBlock(src, b.rb)
-	b.fn.encrypt(b.rb)
+	b.fc.Encrypt(b.rb)
 	b.we.putBlock(dst, b.rb)
 }
 
 func (b *block) Decrypt(dst, src []byte) {
 
+	checkBuffersSize(dst, src, blockSize)
+
+	b.we.getBlock(src, b.rb)
+	b.fc.Decrypt(b.rb)
+	b.we.putBlock(dst, b.rb)
+}
+
+func checkBuffersSize(dst, src []byte, blockSize int) {
 	if len(src) < blockSize {
 		panic("magma: input not full block")
 	}
-
 	if len(dst) < blockSize {
 		panic("magma: output not full block")
 	}
-
-	b.we.getBlock(src, b.rb)
-	b.fn.decrypt(b.rb)
-	b.we.putBlock(dst, b.rb)
 }

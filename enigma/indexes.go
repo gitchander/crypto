@@ -1,9 +1,5 @@
 package enigma
 
-import (
-	"fmt"
-)
-
 const maskByteIsLetter = 1 << (bitsPerByte - 1) // last bit is set
 
 var alphabet = []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
@@ -60,16 +56,4 @@ func indexToLetter(index int) (letter byte, ok bool) {
 		return alphabet[index], true
 	}
 	return 0, false
-}
-
-func parseIndex(s string) (index int, err error) {
-	if len(s) != 1 {
-		return 0, fmt.Errorf("invalid letter %q", s)
-	}
-	letter := s[0]
-	index, ok := letterToIndex(letter)
-	if !ok {
-		return 0, fmt.Errorf("invalid letter %#U", letter)
-	}
-	return index, nil
 }

@@ -1,71 +1,58 @@
 package enigma
 
 import (
-	"strings"
+	"fmt"
 )
 
 type Config struct {
-	Plugboard   string      `json:"plugboard,omitempty"`
-	Rotors      []RotorInfo `json:"rotors"`
-	ReflectorID string      `json:"reflector-id"`
+	Plugboard string       `json:"plugboard,omitempty"`
+	Rotors    RotorsConfig `json:"rotors"`
+	Reflector string       `json:"reflector"`
 }
 
 type Enigma struct {
 	plugboard *Plugboard
-	rotors    []*Rotor
+	rc        *rotorsCore
 	reflector *Reflector
 }
 
 func New(c Config) (*Enigma, error) {
 
-	plugboard, err := parsePlugboard(c.Plugboard)
+	plugboard, err := NewPlugboard(c.Plugboard)
 	if err != nil {
 		return nil, err
 	}
 
-	rotors := make([]*Rotor, len(c.Rotors))
-	for i, ri := range c.Rotors {
-		r, err := NewRotorByInfo(ri)
-		if err != nil {
-			return nil, err
-		}
-		rotors[i] = r
+	rc, err := newRotorsCore(c.Rotors)
+	if err != nil {
+		return nil, err
 	}
 
-	reflector, err := NewReflectorByID(c.ReflectorID)
+	reflector, err := NewReflectorByID(c.Reflector)
 	if err != nil {
 		return nil, err
 	}
 
 	e := &Enigma{
 		plugboard: plugboard,
-		rotors:    rotors,
+		rc:        rc,
 		reflector: reflector,
 	}
 	return e, nil
 }
 
-func (e *Enigma) rotate() {
-	rotateRotors(e.rotors)
+func (e *Enigma) Reset() {
+	e.rc.reset()
 }
 
 func (e *Enigma) feed(index int) int {
 
-	e.rotate()
+	e.rc.rotorsRotate()
 
 	index = e.plugboard.doForward(index)
-
-	n := len(e.rotors)
-	for i := n - 1; i >= 0; i-- {
-		index = e.rotors[i].doForward(index)
-	}
-
+	index = e.rc.rotorsForward(index)
 	index = e.reflector.do(index)
-
-	for i := 0; i < n; i++ {
-		index = e.rotors[i].doBackward(index)
-	}
-
+	index = e.rc.rotorsBackward(index)
 	index = e.plugboard.doBackward(index)
 
 	return index
@@ -81,56 +68,21 @@ func (e *Enigma) FeedLetter(letter byte) byte {
 	}
 
 	index = e.feed(index)
-	letter, _ = indexToLetter(index)
+	outLetter, ok := indexToLetter(index)
+	if !ok {
+		panic(fmt.Errorf("invalid index %d", index))
+	}
 
-	return letter
+	return outLetter
 }
 
 func (e *Enigma) FeedString(s string) string {
-	as := []byte(s)
-	bs := make([]byte, len(as))
+	var (
+		as = []byte(s)
+		bs = make([]byte, len(as))
+	)
 	for i, a := range as {
 		bs[i] = e.FeedLetter(a)
 	}
 	return string(bs)
-}
-
-// Include foreign chars
-func (e *Enigma) FeedIncludeForeign(s string) string {
-	var b strings.Builder
-	for _, r := range s {
-		x, ok := runeSingleByte(r)
-		if ok {
-			index, ok := letterToIndex(x)
-			if ok {
-				index = e.feed(index)
-				x, _ = indexToLetter(index)
-			}
-			b.WriteByte(x)
-		} else {
-			b.WriteRune(r)
-		}
-	}
-	return b.String()
-}
-
-func (e *Enigma) FeedIgnoreForeign(s string) string {
-	var b strings.Builder
-	var i int
-	for _, r := range s {
-		x, ok := runeSingleByte(r)
-		if ok {
-			index, ok := letterToIndex(x)
-			if ok {
-				if (i > 0) && ((i % 5) == 0) {
-					b.WriteByte(' ')
-				}
-				index = e.feed(index)
-				x, _ = indexToLetter(index)
-				b.WriteByte(x)
-				i++
-			}
-		}
-	}
-	return b.String()
 }

@@ -10,10 +10,6 @@ type Plugboard struct {
 }
 
 func NewPlugboard(s string) (*Plugboard, error) {
-	return parsePlugboard(s)
-}
-
-func parsePlugboard(s string) (*Plugboard, error) {
 
 	err := ValidatePlugboard(s)
 	if err != nil {

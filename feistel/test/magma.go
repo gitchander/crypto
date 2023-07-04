@@ -7,6 +7,8 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
+
+	"github.com/gitchander/crypto/feistel"
 )
 
 // https://en.wikipedia.org/wiki/GOST_(block_cipher)
@@ -32,7 +34,7 @@ func NewCipherMagmaSBox(key []byte, sbox SBoxMagma) (cipher.Block, error) {
 	return block, nil
 }
 
-func roundFuncMagma(sbox *SBoxMagma) RoundFunc[Word] {
+func roundFuncMagma(sbox *SBoxMagma) feistel.RoundFunc[Word] {
 	return func(k, r Word) Word {
 		s := k + r
 		s = substituteMagma(sbox, s)

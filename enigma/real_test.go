@@ -10,29 +10,12 @@ import (
 func TestDonitzMessage(t *testing.T) {
 	c := Config{
 		Plugboard: "AE BF CM DQ HU JN LX PR SZ VW",
-		Rotors: []RotorInfo{
-			{
-				ID:       "Beta",
-				Ring:     "A",
-				Position: "Y",
-			},
-			{
-				ID:       "V",
-				Ring:     "A",
-				Position: "O",
-			},
-			{
-				ID:       "VI",
-				Ring:     "E",
-				Position: "S",
-			},
-			{
-				ID:       "VIII",
-				Ring:     "L",
-				Position: "Z",
-			},
+		Rotors: RotorsConfig{
+			IDs:       "Beta V VI VIII",
+			Rings:     "AAEL",
+			Positions: "YOSZ",
 		},
-		ReflectorID: "C-thin",
+		Reflector: "C-thin",
 	}
 
 	tp := TestPair{
@@ -62,7 +45,6 @@ func TestDonitzMessage(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
 	plaintext := e.FeedString(tp.Ciphertext)
 	if plaintext != tp.Plaintext {
 		t.Fatalf("wrong decrypt 'Dönitz message'")

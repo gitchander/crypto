@@ -3,6 +3,8 @@ package main
 import (
 	"crypto/cipher"
 	"fmt"
+
+	"github.com/gitchander/crypto/feistel"
 )
 
 func NewCipher(key []byte) (cipher.Block, error) {
@@ -15,16 +17,16 @@ func NewCipher(key []byte) (cipher.Block, error) {
 
 type blockCipher struct {
 	we *wordEncoder
-	fn *FeistelNetwork[Word]
-	rb *RoundBlock[Word]
+	fc *feistel.Cipher[Word]
+	rb *feistel.RoundBlock[Word]
 }
 
-func newBlockCipher(ks []Word, rf RoundFunc[Word]) (cipher.Block, error) {
+func newBlockCipher(ks []Word, rf feistel.RoundFunc[Word]) (cipher.Block, error) {
 	we := bigEndian
 	block := &blockCipher{
 		we: we,
-		fn: NewFeistelNetwork(ks, rf),
-		rb: new(RoundBlock[Word]),
+		fc: feistel.NewCipher(ks, rf),
+		rb: new(feistel.RoundBlock[Word]),
 	}
 
 	return block, nil
@@ -54,7 +56,7 @@ func (p *blockCipher) Encrypt(dst, src []byte) {
 	}
 
 	p.we.getBlock(src, p.rb)
-	p.fn.Encrypt(p.rb)
+	p.fc.Encrypt(p.rb)
 	p.we.putBlock(dst, p.rb)
 }
 
@@ -66,6 +68,6 @@ func (p *blockCipher) Decrypt(dst, src []byte) {
 	}
 
 	p.we.getBlock(src, p.rb)
-	p.fn.Decrypt(p.rb)
+	p.fc.Decrypt(p.rb)
 	p.we.putBlock(dst, p.rb)
 }

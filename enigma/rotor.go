@@ -70,39 +70,39 @@ func (r *Rotor) setRing(ring int) {
 	r.ring = mod(ring, positions)
 }
 
-func (r *Rotor) doV1(index int, backward bool) int {
+func (r *Rotor) doV1(index int, ct *convertTable) int {
 	index = mod((index - r.ring + r.position), positions)
-	if backward {
-		index = r.ct.backwardTable[index]
-	} else {
-		index = r.ct.forwardTable[index]
-	}
+	index = ct[index]
 	index = mod((index + r.ring - r.position), positions)
 	return index
 }
 
-func (r *Rotor) doV2(index int, backward bool) int {
+func (r *Rotor) doV2(index int, ct *convertTable) int {
+	index = (index - r.ring + r.position + positions) % positions
+	index = ct[index]
+	index = (index + r.ring - r.position + positions) % positions
+	return index
+}
+
+func (r *Rotor) doV3(index int, ct *convertTable) int {
 	index = indexModules[(index - r.ring + r.position + positions)]
-	if backward {
-		index = r.ct.backwardTable[index]
-	} else {
-		index = r.ct.forwardTable[index]
-	}
+	index = ct[index]
 	index = indexModules[(index + r.ring - r.position + positions)]
 	return index
 }
 
-func (r *Rotor) do(index int, backward bool) int {
-	//return r.doV1(index, backward)
-	return r.doV2(index, backward)
+func (r *Rotor) doTable(index int, ct *convertTable) int {
+	//return r.doV1(index, ct)
+	return r.doV2(index, ct)
+	//return r.doV3(index, ct)
 }
 
 func (r *Rotor) doForward(index int) int {
-	return r.do(index, false)
+	return r.doTable(index, &(r.ct.forwardTable))
 }
 
 func (r *Rotor) doBackward(index int) int {
-	return r.do(index, true)
+	return r.doTable(index, &(r.ct.backwardTable))
 }
 
 func rotateRotors(rs []*Rotor) {

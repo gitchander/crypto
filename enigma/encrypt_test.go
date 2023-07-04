@@ -20,24 +20,12 @@ func TestSamples(t *testing.T) {
 		{
 			Config: Config{
 				Plugboard: "BQ CR DI EJ KW MT OS PX UZ GH",
-				Rotors: []RotorInfo{
-					{
-						ID:       "I",
-						Ring:     "A",
-						Position: "A",
-					},
-					{
-						ID:       "II",
-						Ring:     "A",
-						Position: "A",
-					},
-					{
-						ID:       "III",
-						Ring:     "A",
-						Position: "A",
-					},
+				Rotors: RotorsConfig{
+					IDs:       "I II III",
+					Rings:     "AAA",
+					Positions: "AAA",
 				},
-				ReflectorID: "A",
+				Reflector: "A",
 			},
 			Pairs: []TestPair{
 				{
@@ -49,24 +37,12 @@ func TestSamples(t *testing.T) {
 		{
 			Config: Config{
 				Plugboard: "AV BS CG DL FU HZ IN KM OW RX",
-				Rotors: []RotorInfo{
-					{
-						ID:       "I",
-						Ring:     "A",
-						Position: "A",
-					},
-					{
-						ID:       "II",
-						Ring:     "A",
-						Position: "B",
-					},
-					{
-						ID:       "III",
-						Ring:     "A",
-						Position: "C",
-					},
+				Rotors: RotorsConfig{
+					IDs:       "I II III",
+					Rings:     "AAA",
+					Positions: "ABC",
 				},
-				ReflectorID: "A",
+				Reflector: "A",
 			},
 			Pairs: []TestPair{
 				{
@@ -78,24 +54,12 @@ func TestSamples(t *testing.T) {
 		{
 			Config: Config{
 				Plugboard: "PO ML IU KJ NH YT GB VF RE DC",
-				Rotors: []RotorInfo{
-					{
-						ID:       "I",
-						Ring:     "C",
-						Position: "S",
-					},
-					{
-						ID:       "II",
-						Ring:     "D",
-						Position: "H",
-					},
-					{
-						ID:       "III",
-						Ring:     "W",
-						Position: "J",
-					},
+				Rotors: RotorsConfig{
+					IDs:       "I II III",
+					Rings:     "CDW",
+					Positions: "SHJ",
 				},
-				ReflectorID: "B",
+				Reflector: "B",
 			},
 			Pairs: []TestPair{
 				{
@@ -155,24 +119,12 @@ func TestSamples(t *testing.T) {
 		{
 			Config: Config{
 				Plugboard: "AB CD EF GH IJ KL",
-				Rotors: []RotorInfo{
-					{
-						ID:       "I",
-						Ring:     "D",
-						Position: "A",
-					},
-					{
-						ID:       "II",
-						Ring:     "E",
-						Position: "B",
-					},
-					{
-						ID:       "III",
-						Ring:     "F",
-						Position: "C",
-					},
+				Rotors: RotorsConfig{
+					IDs:       "I II III",
+					Rings:     "DEF",
+					Positions: "ABC",
 				},
-				ReflectorID: "B",
+				Reflector: "B",
 			},
 			Pairs: []TestPair{
 				{
@@ -189,7 +141,7 @@ func TestSamples(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			ciphertext := e.FeedString(pair.Plaintext)
+			ciphertext := TextWorker{}.FeedTextPanicForeign(e, pair.Plaintext)
 			if ciphertext != pair.Ciphertext {
 				t.Fatalf("(sample %d, pair %d) invalid ciphertext: have %q, want %q",
 					i, j, ciphertext, pair.Ciphertext)
@@ -203,24 +155,12 @@ func TestIncludeForeign(t *testing.T) {
 		{
 			Config: Config{
 				Plugboard: "BQ CR DI EJ KW MT OS PX UZ GH",
-				Rotors: []RotorInfo{
-					{
-						ID:       "VI",
-						Ring:     "A",
-						Position: "A",
-					},
-					{
-						ID:       "I",
-						Ring:     "A",
-						Position: "Q",
-					},
-					{
-						ID:       "III",
-						Ring:     "A",
-						Position: "L",
-					},
+				Rotors: RotorsConfig{
+					IDs:       "VI I III",
+					Rings:     "AAA",
+					Positions: "AQL",
 				},
-				ReflectorID: "B",
+				Reflector: "B",
 			},
 			Pairs: []TestPair{
 				{
@@ -240,7 +180,7 @@ func TestIncludeForeign(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			ciphertext := e.FeedIncludeForeign(pair.Plaintext)
+			ciphertext := TextWorker{}.FeedTextIncludeForeign(e, pair.Plaintext)
 			if ciphertext != pair.Ciphertext {
 				t.Fatalf("(sample %d, pair %d) invalid ciphertext: have %q, want %q",
 					i, j, ciphertext, pair.Ciphertext)
@@ -254,24 +194,12 @@ func TestIgnoreForeign(t *testing.T) {
 		{
 			Config: Config{
 				Plugboard: "BQ CR DI EJ KW MT OS PX UZ GH",
-				Rotors: []RotorInfo{
-					{
-						ID:       "VI",
-						Ring:     "A",
-						Position: "A",
-					},
-					{
-						ID:       "I",
-						Ring:     "A",
-						Position: "Q",
-					},
-					{
-						ID:       "III",
-						Ring:     "A",
-						Position: "L",
-					},
+				Rotors: RotorsConfig{
+					IDs:       "VI I III",
+					Rings:     "AAA",
+					Positions: "AQL",
 				},
-				ReflectorID: "B",
+				Reflector: "B",
 			},
 			Pairs: []TestPair{
 				{
@@ -291,7 +219,7 @@ func TestIgnoreForeign(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			ciphertext := e.FeedIgnoreForeign(pair.Plaintext)
+			ciphertext := TextWorker{}.FeedTextIgnoreForeign(e, pair.Plaintext)
 			if ciphertext != pair.Ciphertext {
 				t.Fatalf("(sample %d, pair %d) invalid ciphertext: have %q, want %q",
 					i, j, ciphertext, pair.Ciphertext)

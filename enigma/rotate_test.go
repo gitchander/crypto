@@ -16,11 +16,11 @@ func newEnigmaPos(e *Enigma) *enigmaPos {
 }
 
 func (e *enigmaPos) Rotate() {
-	e.e.rotate()
+	e.e.rc.rotorsRotate()
 }
 
 func (e *enigmaPos) Positions() string {
-	rotors := e.e.rotors
+	rotors := e.e.rc.rotors
 	ls := make([]byte, len(rotors))
 	for i, r := range rotors {
 		letter, _ := indexToLetter(r.getPosition())
@@ -31,12 +31,13 @@ func (e *enigmaPos) Positions() string {
 
 func (e *enigmaPos) SetPositions(s string) {
 	bs := []byte(s)
-	if len(bs) < len(e.e.rotors) {
+	rotors := e.e.rc.rotors
+	if len(bs) < len(rotors) {
 		err := fmt.Errorf("insufficient positions length: have %d, want %d",
-			len(bs), len(e.e.rotors))
+			len(bs), len(rotors))
 		panic(err)
 	}
-	for i, r := range e.e.rotors {
+	for i, r := range rotors {
 		letter := bs[i]
 		index, ok := letterToIndex(letter)
 		if !ok {
@@ -67,24 +68,12 @@ func TestRotate(t *testing.T) {
 	}
 
 	c := Config{
-		Rotors: []RotorInfo{
-			{
-				ID:       "I",
-				Ring:     "A",
-				Position: "A",
-			},
-			{
-				ID:       "II",
-				Ring:     "A",
-				Position: "A",
-			},
-			{
-				ID:       "III",
-				Ring:     "A",
-				Position: "A",
-			},
+		Rotors: RotorsConfig{
+			IDs:       "I II III",
+			Rings:     "AAA",
+			Positions: "AAA",
 		},
-		ReflectorID: "B",
+		Reflector: "B",
 	}
 	e, err := New(c)
 	if err != nil {

@@ -119,8 +119,10 @@ func JoinLines(linePrefix string, lines ...string) string {
 }
 
 func OnlyLetters(s string) string {
-	rs := []rune(s)
-	bs := make([]byte, 0, len(rs))
+	var (
+		rs = []rune(s)
+		bs = make([]byte, 0, len(rs))
+	)
 	for _, r := range rs {
 		b, ok := runeSingleByte(r)
 		if ok {

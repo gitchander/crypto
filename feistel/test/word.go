@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/binary"
+
+	"github.com/gitchander/crypto/feistel"
 )
 
 //------------------------------------------------------------------------------
@@ -55,12 +57,12 @@ func (we *wordEncoder) putWord(b []byte, w Word) {
 	we.order.PutUint64(b, uint64(w))
 }
 
-func (we *wordEncoder) getBlock(data []byte, p *RoundBlock[Word]) {
+func (we *wordEncoder) getBlock(data []byte, p *feistel.RoundBlock[Word]) {
 	p.R = we.getWord(data[0*sizeOfWord:])
 	p.L = we.getWord(data[1*sizeOfWord:])
 }
 
-func (we *wordEncoder) putBlock(data []byte, p *RoundBlock[Word]) {
+func (we *wordEncoder) putBlock(data []byte, p *feistel.RoundBlock[Word]) {
 	we.putWord(data[0*sizeOfWord:], p.R)
 	we.putWord(data[1*sizeOfWord:], p.L)
 }

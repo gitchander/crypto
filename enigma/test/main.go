@@ -34,24 +34,12 @@ func checkError(err error) {
 func testMarshalJSON() {
 	c := enigma.Config{
 		Plugboard: "BQ CR DI EJ KW MT OS PX UZ GH",
-		Rotors: []enigma.RotorInfo{
-			{
-				ID:       "I",
-				Ring:     "A",
-				Position: "A",
-			},
-			{
-				ID:       "II",
-				Ring:     "A",
-				Position: "A",
-			},
-			{
-				ID:       "III",
-				Ring:     "A",
-				Position: "A",
-			},
+		Rotors: enigma.RotorsConfig{
+			IDs:       "I II III",
+			Rings:     "AAA",
+			Positions: "AAA",
 		},
-		ReflectorID: "A",
+		Reflector: "A",
 	}
 
 	data, err := json.MarshalIndent(c, "", "\t")
@@ -75,29 +63,12 @@ func testMarshalJSON() {
 func testDonitzMessage() {
 	c := enigma.Config{
 		Plugboard: "AE BF CM DQ HU JN LX PR SZ VW",
-		Rotors: []enigma.RotorInfo{
-			{
-				ID:       "Beta",
-				Ring:     "A",
-				Position: "Y",
-			},
-			{
-				ID:       "V",
-				Ring:     "A",
-				Position: "O",
-			},
-			{
-				ID:       "VI",
-				Ring:     "E",
-				Position: "S",
-			},
-			{
-				ID:       "VIII",
-				Ring:     "L",
-				Position: "Z",
-			},
+		Rotors: enigma.RotorsConfig{
+			IDs:       "Beta V VI VIII",
+			Rings:     "AAEL",
+			Positions: "YOSZ",
 		},
-		ReflectorID: "C-thin",
+		Reflector: "C-thin",
 	}
 
 	ciphertext := enigma.JoinStrings(
@@ -214,29 +185,12 @@ func testUtf8Base16() {
 
 	c := enigma.Config{
 		Plugboard: "AE BF CM DQ HU JN LX PR SZ VW",
-		Rotors: []enigma.RotorInfo{
-			{
-				ID:       "Beta",
-				Ring:     "A",
-				Position: "Y",
-			},
-			{
-				ID:       "V",
-				Ring:     "A",
-				Position: "O",
-			},
-			{
-				ID:       "VI",
-				Ring:     "E",
-				Position: "S",
-			},
-			{
-				ID:       "VIII",
-				Ring:     "L",
-				Position: "Z",
-			},
+		Rotors: enigma.RotorsConfig{
+			IDs:       "Beta V VI VIII",
+			Rings:     "AAEL",
+			Positions: "YOSZ",
 		},
-		ReflectorID: "C-thin",
+		Reflector: "C-thin",
 	}
 
 	e, err := enigma.New(c)
@@ -247,10 +201,8 @@ func testUtf8Base16() {
 	fmt.Println("plaintext:", plaintext)
 	fmt.Println("ciphertext:", ciphertext)
 
-	d, err := enigma.New(c)
-	checkError(err)
-
-	plaintextDecrypted := d.FeedString(ciphertext)
+	e.Reset()
+	plaintextDecrypted := e.FeedString(ciphertext)
 	bs, err := base16.DecodeString(plaintextDecrypted)
 	checkError(err)
 	resultText := string(bs)
@@ -264,29 +216,12 @@ func testUtf8Base26() {
 
 	c := enigma.Config{
 		Plugboard: "AE BF CM DQ HU JN LX PR SZ VW",
-		Rotors: []enigma.RotorInfo{
-			{
-				ID:       "Beta",
-				Ring:     "A",
-				Position: "Y",
-			},
-			{
-				ID:       "V",
-				Ring:     "A",
-				Position: "O",
-			},
-			{
-				ID:       "VI",
-				Ring:     "E",
-				Position: "S",
-			},
-			{
-				ID:       "VIII",
-				Ring:     "L",
-				Position: "Z",
-			},
+		Rotors: enigma.RotorsConfig{
+			IDs:       "Beta V VI VIII",
+			Rings:     "AAEL",
+			Positions: "YOSZ",
 		},
-		ReflectorID: "C-thin",
+		Reflector: "C-thin",
 	}
 
 	e, err := enigma.New(c)
@@ -297,10 +232,8 @@ func testUtf8Base26() {
 	fmt.Println("plaintext:", plaintext)
 	fmt.Println("ciphertext:", ciphertext)
 
-	d, err := enigma.New(c)
-	checkError(err)
-
-	plaintextDecrypted := d.FeedString(ciphertext)
+	e.Reset()
+	plaintextDecrypted := e.FeedString(ciphertext)
 	bs, err := base26.DecodeString(plaintextDecrypted)
 	checkError(err)
 	resultText := string(bs)
@@ -312,24 +245,12 @@ func testAnyBytes() {
 
 	c := enigma.Config{
 		Plugboard: "BQ CR DI EJ KW MT OS PX UZ GH",
-		Rotors: []enigma.RotorInfo{
-			{
-				ID:       "I",
-				Ring:     "A",
-				Position: "A",
-			},
-			{
-				ID:       "II",
-				Ring:     "A",
-				Position: "A",
-			},
-			{
-				ID:       "III",
-				Ring:     "A",
-				Position: "A",
-			},
+		Rotors: enigma.RotorsConfig{
+			IDs:       "I II III",
+			Rings:     "AAA",
+			Positions: "AAA",
 		},
-		ReflectorID: "A",
+		Reflector: "A",
 	}
 
 	r := random.NewRandNow()
@@ -345,10 +266,8 @@ func testAnyBytes() {
 
 		cipherText := e.FeedString(plainTextInput)
 
-		d, err := enigma.New(c)
-		checkError(err)
-
-		plainTextOutput := d.FeedString(cipherText)
+		e.Reset()
+		plainTextOutput := e.FeedString(cipherText)
 
 		plainBytesOutput, err := base26.DecodeString(plainTextOutput)
 		checkError(err)

@@ -2,6 +2,8 @@ package magma
 
 import (
 	"encoding/binary"
+
+	"github.com/gitchander/crypto/feistel"
 )
 
 const bytesPerWord = 4
@@ -39,13 +41,13 @@ type wordEncoder struct {
 	byteOrder binary.ByteOrder
 }
 
-func newWordEncoder_(byteOrder binary.ByteOrder) *wordEncoder {
+func newWordEncoder(byteOrder binary.ByteOrder) *wordEncoder {
 	return &wordEncoder{
 		byteOrder: byteOrder,
 	}
 }
 
-var defaultWordEncoder = newWordEncoder_(binary.LittleEndian)
+var defaultWordEncoder = newWordEncoder(binary.LittleEndian)
 
 func (we *wordEncoder) getWord(b []byte) word {
 	return word(we.byteOrder.Uint32(b))
@@ -55,12 +57,12 @@ func (we *wordEncoder) putWord(b []byte, w word) {
 	we.byteOrder.PutUint32(b, uint32(w))
 }
 
-func (we *wordEncoder) getBlock(data []byte, p *roundBlock) {
+func (we *wordEncoder) getBlock(data []byte, p *feistel.RoundBlock[word]) {
 	p.R = we.getWord(data[0*bytesPerWord:])
 	p.L = we.getWord(data[1*bytesPerWord:])
 }
 
-func (we *wordEncoder) putBlock(data []byte, p *roundBlock) {
+func (we *wordEncoder) putBlock(data []byte, p *feistel.RoundBlock[word]) {
 	we.putWord(data[0*bytesPerWord:], p.R)
 	we.putWord(data[1*bytesPerWord:], p.L)
 }

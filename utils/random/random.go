@@ -21,16 +21,19 @@ func FillBytes(r *rand.Rand, bs []byte) {
 	const (
 		bitsPerByte    = 8
 		bytesPerUint64 = 8
+		bitsPerUint64  = bitsPerByte * bytesPerUint64
 	)
-	var x uint64
-	var n int // number of random bytes
+	var (
+		ax uint64 // bits accumulator
+		an int    // bits count
+	)
 	for i := range bs {
-		if n == 0 {
-			x = r.Uint64()
-			n = bytesPerUint64
+		if an < bitsPerByte {
+			ax = r.Uint64()
+			an = bitsPerUint64
 		}
-		bs[i] = byte(x)
-		x >>= bitsPerByte
-		n--
+		bs[i] = byte(ax)
+		ax >>= bitsPerByte
+		an -= bitsPerByte
 	}
 }
