@@ -2,6 +2,8 @@ package enigma
 
 import (
 	"strings"
+
+	"github.com/gitchander/crypto/enigma/ecore"
 )
 
 type TextWorker struct{}
@@ -23,10 +25,10 @@ func (TextWorker) FeedTextIncludeForeign(e *Enigma, text string) string {
 	for _, r := range text {
 		x, ok := runeSingleByte(r)
 		if ok {
-			index, ok := letterToIndex(x)
-			if ok {
+			index, err := ecore.LetterToIndex(x)
+			if err == nil {
 				index = e.feed(index)
-				x, _ = indexToLetter(index)
+				x, _ = ecore.IndexToLetter(index)
 			}
 			b.WriteByte(x)
 		} else {
@@ -42,13 +44,13 @@ func (TextWorker) FeedTextIgnoreForeign(e *Enigma, text string) string {
 	for _, r := range text {
 		x, ok := runeSingleByte(r)
 		if ok {
-			index, ok := letterToIndex(x)
-			if ok {
+			index, err := ecore.LetterToIndex(x)
+			if err == nil {
 				if (i > 0) && ((i % 5) == 0) {
 					b.WriteByte(' ')
 				}
 				index = e.feed(index)
-				x, _ = indexToLetter(index)
+				x, _ = ecore.IndexToLetter(index)
 				b.WriteByte(x)
 				i++
 			}

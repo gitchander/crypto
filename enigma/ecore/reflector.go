@@ -1,8 +1,4 @@
-package enigma
-
-import (
-	"fmt"
-)
+package ecore
 
 type ReflectorConfig struct {
 	Wiring string
@@ -23,14 +19,6 @@ func NewReflector(rc ReflectorConfig) (*Reflector, error) {
 	return r, nil
 }
 
-func NewReflectorByID(id string) (*Reflector, error) {
-	rc, ok := historicalReflectors[id]
-	if !ok {
-		return nil, fmt.Errorf("invalid reflector id %q", id)
-	}
-	return NewReflector(rc)
-}
-
-func (r *Reflector) do(index int) int {
+func (r *Reflector) Do(index int) int {
 	return r.ct.forwardTable[index]
 }

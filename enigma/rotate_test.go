@@ -3,6 +3,8 @@ package enigma
 import (
 	"fmt"
 	"testing"
+
+	"github.com/gitchander/crypto/enigma/ecore"
 )
 
 // https://en.wikipedia.org/wiki/Enigma_rotor_details
@@ -16,14 +18,17 @@ func newEnigmaPos(e *Enigma) *enigmaPos {
 }
 
 func (e *enigmaPos) Rotate() {
-	e.e.rc.rotorsRotate()
+	e.e.rc.rotate()
 }
 
 func (e *enigmaPos) Positions() string {
 	rotors := e.e.rc.rotors
 	ls := make([]byte, len(rotors))
 	for i, r := range rotors {
-		letter, _ := indexToLetter(r.getPosition())
+		letter, err := ecore.IndexToLetter(r.GetPosition())
+		if err != nil {
+			panic(err)
+		}
 		ls[i] = letter
 	}
 	return string(ls)
@@ -39,11 +44,11 @@ func (e *enigmaPos) SetPositions(s string) {
 	}
 	for i, r := range rotors {
 		letter := bs[i]
-		index, ok := letterToIndex(letter)
-		if !ok {
-			panic(errInvalidLetter(letter))
+		index, err := ecore.LetterToIndex(letter)
+		if err != nil {
+			panic(err)
 		}
-		r.setPosition(index)
+		r.SetPosition(index)
 	}
 }
 

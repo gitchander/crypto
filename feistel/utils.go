@@ -6,7 +6,7 @@ func cloneSlice[T any](a []T) []T {
 	return b
 }
 
-func reverse[T any](a []T) {
+func reverseSlice[T any](a []T) {
 	i, j := 0, (len(a) - 1)
 	for i < j {
 		a[i], a[j] = a[j], a[i]

@@ -32,7 +32,7 @@ func NewCipher[T Unsigned](ks []T, rf RoundFunc[T]) *Cipher[T] {
 		encKeys = cloneSlice(ks)
 		decKeys = cloneSlice(ks)
 	)
-	reverse(decKeys)
+	reverseSlice(decKeys)
 
 	return &Cipher[T]{
 		rf:      rf,

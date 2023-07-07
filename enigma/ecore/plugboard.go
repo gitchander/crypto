@@ -1,4 +1,4 @@
-package enigma
+package ecore
 
 import (
 	"fmt"
@@ -58,10 +58,10 @@ func NewPlugboard(s string) (*Plugboard, error) {
 	return &Plugboard{ct}, nil
 }
 
-func (p *Plugboard) doForward(index int) int {
+func (p *Plugboard) DoForward(index int) int {
 	return p.forwardTable[index]
 }
 
-func (p *Plugboard) doBackward(index int) int {
+func (p *Plugboard) DoBackward(index int) int {
 	return p.backwardTable[index]
 }

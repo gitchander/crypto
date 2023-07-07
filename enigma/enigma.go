@@ -1,7 +1,7 @@
 package enigma
 
 import (
-	"fmt"
+	"github.com/gitchander/crypto/enigma/ecore"
 )
 
 type Config struct {
@@ -11,14 +11,14 @@ type Config struct {
 }
 
 type Enigma struct {
-	plugboard *Plugboard
+	plugboard *ecore.Plugboard
 	rc        *rotorsCore
-	reflector *Reflector
+	reflector *ecore.Reflector
 }
 
 func New(c Config) (*Enigma, error) {
 
-	plugboard, err := NewPlugboard(c.Plugboard)
+	plugboard, err := ecore.NewPlugboard(c.Plugboard)
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +28,7 @@ func New(c Config) (*Enigma, error) {
 		return nil, err
 	}
 
-	reflector, err := NewReflectorByID(c.Reflector)
+	reflector, err := reflectorByID(c.Reflector)
 	if err != nil {
 		return nil, err
 	}
@@ -47,13 +47,13 @@ func (e *Enigma) Reset() {
 
 func (e *Enigma) feed(index int) int {
 
-	e.rc.rotorsRotate()
+	e.rc.rotate()
 
-	index = e.plugboard.doForward(index)
-	index = e.rc.rotorsForward(index)
-	index = e.reflector.do(index)
-	index = e.rc.rotorsBackward(index)
-	index = e.plugboard.doBackward(index)
+	index = e.plugboard.DoForward(index)
+	index = e.rc.doForward(index)
+	index = e.reflector.Do(index)
+	index = e.rc.doBackward(index)
+	index = e.plugboard.DoBackward(index)
 
 	return index
 }
@@ -62,15 +62,15 @@ func (e *Enigma) feed(index int) int {
 // Encrypt / Decrypt
 func (e *Enigma) FeedLetter(letter byte) byte {
 
-	index, ok := letterToIndex(letter)
-	if !ok {
-		panic(errInvalidLetter(letter))
+	index, err := ecore.LetterToIndex(letter)
+	if err != nil {
+		panic(err)
 	}
 
 	index = e.feed(index)
-	outLetter, ok := indexToLetter(index)
-	if !ok {
-		panic(fmt.Errorf("invalid index %d", index))
+	outLetter, err := ecore.IndexToLetter(index)
+	if err != nil {
+		panic(err)
 	}
 
 	return outLetter

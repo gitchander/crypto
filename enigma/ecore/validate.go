@@ -1,4 +1,4 @@
-package enigma
+package ecore
 
 import (
 	"fmt"
@@ -12,20 +12,13 @@ var (
 	regexpPlugboardPair = regexp.MustCompile("^([A-Z]{2})$")
 )
 
-func ValidatePosition(s string) error {
-	if !regexpPosition.MatchString(s) {
-		return fmt.Errorf("invalid position %q", s)
-	}
-	return nil
-}
-
 func ValidateWiring(wiring string) error {
-	if !regexpWiring.MatchString(wiring) {
+	if !(regexpWiring.MatchString(wiring)) {
 		return fmt.Errorf("wiring is invalid %q", wiring)
 	}
 	// Check duplicates:
-	if rs := duplicateRunes(wiring); len(rs) > 0 {
-		return fmt.Errorf("wiring has duplicates %q", rs)
+	if d, ok := findDuplicate([]rune(wiring)); ok {
+		return fmt.Errorf("wiring has duplicates %q", d)
 	}
 	return nil
 }
@@ -41,9 +34,9 @@ func ValidatePlugboard(s string) error {
 		}
 	}
 	// Check duplicates:
-	rs := duplicateRunes(strings.Join(pairs, ""))
-	if len(rs) > 0 {
-		return fmt.Errorf("plugboard has duplicates %q", rs)
+	d, ok := findDuplicate([]rune(strings.Join(pairs, "")))
+	if ok {
+		return fmt.Errorf("plugboard has duplicates %q", d)
 	}
 	return nil
 }

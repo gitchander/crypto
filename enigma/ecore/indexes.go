@@ -1,4 +1,8 @@
-package enigma
+package ecore
+
+import (
+	"fmt"
+)
 
 const maskByteIsLetter = 1 << (bitsPerByte - 1) // last bit is set
 
@@ -50,10 +54,58 @@ func letterToIndex(letter byte) (index int, ok bool) {
 	return 0, false
 }
 
+func LetterToIndex(letter byte) (index int, err error) {
+	index, ok := letterToIndex(letter)
+	if !ok {
+		return 0, errInvalidLetter(letter)
+	}
+	return index, nil
+}
+
 // Position to letter
 func indexToLetter(index int) (letter byte, ok bool) {
 	if (0 <= index) && (index < len(alphabet)) {
 		return alphabet[index], true
 	}
 	return 0, false
+}
+
+func IndexToLetter(index int) (letter byte, err error) {
+	letter, ok := indexToLetter(index)
+	if !ok {
+		return 0, fmt.Errorf("Invalid index %d", index)
+	}
+	return letter, nil
+}
+
+// fmt.Errorf("invalid index %d", index)
+
+func ParseIndexes(s string) ([]int, error) {
+	var (
+		as = []byte(s)
+		bs = make([]int, len(as))
+	)
+	for i, a := range as {
+		b, ok := letterToIndex(a)
+		if !ok {
+			return nil, errInvalidLetterByIndex(a, i)
+		}
+		bs[i] = b
+	}
+	return bs, nil
+}
+
+func parseLettersN(s string, bs []int) error {
+	as := []byte(s)
+	if len(as) < len(bs) {
+		return fmt.Errorf("insufficient length of letters: have %d, want %d", len(as), len(bs))
+	}
+	for i, a := range as {
+		b, ok := letterToIndex(a)
+		if !ok {
+			return errInvalidLetterByIndex(a, i)
+		}
+		bs[i] = b
+	}
+	return nil
 }
