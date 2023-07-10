@@ -1,13 +1,5 @@
 package ecore
 
-import (
-	"fmt"
-)
-
-func errInvalidIndex(name string, index int) error {
-	return fmt.Errorf("invalid (%s) value: have %d, want [%d:%d]", name, index, 0, positions)
-}
-
 type RotorConfig struct {
 	Wiring    string
 	Turnovers string
@@ -39,20 +31,8 @@ func NewRotor(rc RotorConfig) (*Rotor, error) {
 	return r, nil
 }
 
-func parseTurnovers(s string) ([]bool, error) {
-	tis, err := ParseIndexes(s)
-	if err != nil {
-		return nil, err
-	}
-	turnovers := make([]bool, positions)
-	for _, ti := range tis {
-		turnovers[ti] = true
-	}
-	return turnovers, nil
-}
-
 func (r *Rotor) rotate() {
-	r.position = (r.position + 1) % positions
+	r.position = (r.position + 1) % totalIndexes
 }
 
 func (r *Rotor) hasTurnover() bool {
@@ -64,11 +44,11 @@ func (r *Rotor) GetPosition() int {
 }
 
 func (r *Rotor) SetPosition(position int) error {
-	if (0 <= position) && (position < positions) {
+	if indexIsValid(position) {
 		r.position = position
 		return nil
 	}
-	return errInvalidIndex("position", position)
+	return errInvalidIndex(position)
 }
 
 func (r *Rotor) GetRing() int {
@@ -76,56 +56,44 @@ func (r *Rotor) GetRing() int {
 }
 
 func (r *Rotor) SetRing(ring int) error {
-	if (0 <= ring) && (ring < positions) {
+	if indexIsValid(ring) {
 		r.ring = ring
 		return nil
 	}
-	return errInvalidIndex("ring", ring)
+	return errInvalidIndex(ring)
 }
 
 func (r *Rotor) doV1(index int, ct *convertTable) int {
-	index = mod((index - r.ring + r.position), positions)
+	index = mod((index - r.ring + r.position), totalIndexes)
 	index = ct[index]
-	index = mod((index + r.ring - r.position), positions)
+	index = mod((index + r.ring - r.position), totalIndexes)
 	return index
 }
 
 func (r *Rotor) doV2(index int, ct *convertTable) int {
-	index = (index - r.ring + r.position + positions) % positions
+	index = (index - r.ring + r.position + totalIndexes) % totalIndexes
 	index = ct[index]
-	index = (index + r.ring - r.position + positions) % positions
+	index = (index + r.ring - r.position + totalIndexes) % totalIndexes
 	return index
 }
 
-// func (r *Rotor) doV3(index int, ct *convertTable) int {
-// 	index = indexModules[(index - r.ring + r.position + positions)]
-// 	index = ct[index]
-// 	index = indexModules[(index + r.ring - r.position + positions)]
-// 	return index
-// }
+func (r *Rotor) doV3(index int, ct *convertTable) int {
+	index = indexModules[(index - r.ring + r.position + totalIndexes)]
+	index = ct[index]
+	index = indexModules[(index + r.ring - r.position + totalIndexes)]
+	return index
+}
 
 func (r *Rotor) doTable(index int, ct *convertTable) int {
 	//return r.doV1(index, ct)
-	return r.doV2(index, ct)
-	//return r.doV3(index, ct)
+	//return r.doV2(index, ct)
+	return r.doV3(index, ct)
 }
 
-func (r *Rotor) DoForward(index int) int {
+func (r *Rotor) Forward(index int) int {
 	return r.doTable(index, &(r.ct.forwardTable))
 }
 
-func (r *Rotor) DoBackward(index int) int {
+func (r *Rotor) Backward(index int) int {
 	return r.doTable(index, &(r.ct.backwardTable))
-}
-
-func RotateRotors(rs []*Rotor) {
-	hasPrev := true // Turnover last rotor.
-	for i := len(rs) - 1; i >= 0; i-- {
-		r := rs[i]
-		ok := r.hasTurnover()
-		if hasPrev || ok {
-			r.rotate()
-		}
-		hasPrev = ok
-	}
 }

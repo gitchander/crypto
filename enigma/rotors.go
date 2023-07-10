@@ -16,81 +16,6 @@ type RotorsConfig struct {
 
 //------------------------------------------------------------------------------
 
-// rotors block
-type rotorsCore struct {
-	rotors    []*ecore.Rotor
-	rings     []int // initial rings
-	positions []int // initial positions
-}
-
-func newRotorsCore(config RotorsConfig) (*rotorsCore, error) {
-
-	// parse rotors:
-	rotors, err := parseRotors(config.IDs)
-	if err != nil {
-		return nil, err
-	}
-
-	// parse rings:
-	rings, err := ecore.ParseIndexes(config.Rings)
-	if err != nil {
-		return nil, fmt.Errorf("parse %s: %w", "rings", err)
-	}
-	if len(rings) != len(rotors) {
-		return nil, fmt.Errorf("invalid numbers of %s: have %d, want %d", "rings", len(rings), len(rotors))
-	}
-
-	//  parse positions:
-	positions, err := ecore.ParseIndexes(config.Positions)
-	if err != nil {
-		return nil, fmt.Errorf("parse %s: %w", "positions", err)
-	}
-	if len(positions) != len(rotors) {
-		return nil, fmt.Errorf("invalid numbers of %s: have %d, want %d", "positions", len(positions), len(rotors))
-	}
-
-	rc := &rotorsCore{
-		rotors:    rotors,
-		rings:     rings,
-		positions: positions,
-	}
-
-	rc.reset()
-
-	return rc, nil
-}
-
-func (p *rotorsCore) reset() {
-	for i, rotor := range p.rotors {
-		rotor.SetRing(p.rings[i])
-	}
-	for i, rotor := range p.rotors {
-		rotor.SetPosition(p.positions[i])
-	}
-}
-
-func (p *rotorsCore) rotate() {
-	ecore.RotateRotors(p.rotors)
-}
-
-func (p *rotorsCore) doForward(index int) int {
-	n := len(p.rotors)
-	for i := n - 1; i >= 0; i-- {
-		index = p.rotors[i].DoForward(index)
-	}
-	return index
-}
-
-func (p *rotorsCore) doBackward(index int) int {
-	n := len(p.rotors)
-	for i := 0; i < n; i++ {
-		index = p.rotors[i].DoBackward(index)
-	}
-	return index
-}
-
-//------------------------------------------------------------------------------
-
 type syncRotors struct {
 	guard  sync.RWMutex
 	rotors map[string]ecore.RotorConfig
@@ -178,26 +103,40 @@ func RegisterRotor(rotorID string, rc ecore.RotorConfig) {
 	rotorsMap[rotorID] = rc
 }
 
-func rotorByID(rotorID string) (*ecore.Rotor, error) {
+func rotorConfigByID(rotorID string) (ecore.RotorConfig, error) {
 	rotorsGuard.RLock()
 	defer rotorsGuard.RUnlock()
 
 	rc, ok := rotorsMap[rotorID]
 	if !ok {
-		return nil, fmt.Errorf("There is no rotor ID (%q)", rotorID)
+		var zeroValue ecore.RotorConfig
+		return zeroValue, fmt.Errorf("There is no rotor ID (%q)", rotorID)
 	}
-	return ecore.NewRotor(rc)
+	return rc, nil
 }
 
-func parseRotors(s string) ([]*ecore.Rotor, error) {
+func parseRotorConfigs(s string) ([]ecore.RotorConfig, error) {
 	rotorIDs := strings.Split(s, " ")
-	rs := make([]*ecore.Rotor, len(rotorIDs))
+	rcs := make([]ecore.RotorConfig, len(rotorIDs))
 	for i, rotorID := range rotorIDs {
-		r, err := rotorByID(rotorID)
+		rc, err := rotorConfigByID(rotorID)
 		if err != nil {
 			return nil, err
 		}
-		rs[i] = r
+		rcs[i] = rc
 	}
-	return rs, nil
+	return rcs, nil
+}
+
+func newRotorBlock(rc RotorsConfig) (*ecore.RotorBlock, error) {
+	rcs, err := parseRotorConfigs(rc.IDs)
+	if err != nil {
+		return nil, err
+	}
+	rbc := ecore.RotorBlockConfig{
+		Rotors:    rcs,
+		Rings:     rc.Rings,
+		Positions: rc.Positions,
+	}
+	return ecore.NewRotorBlock(rbc)
 }

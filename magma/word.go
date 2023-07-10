@@ -20,22 +20,6 @@ func wordShift11(w word) word {
 
 //------------------------------------------------------------------------------
 
-func cloneWords(a []word) []word {
-	b := make([]word, len(a))
-	copy(b, a)
-	return b
-}
-
-func reverseWords(a []word) {
-	i, j := 0, (len(a) - 1)
-	for i < j {
-		a[i], a[j] = a[j], a[i]
-		i, j = i+1, j-1
-	}
-}
-
-//------------------------------------------------------------------------------
-
 // byteOrder
 type wordEncoder struct {
 	byteOrder binary.ByteOrder

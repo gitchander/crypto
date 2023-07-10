@@ -11,9 +11,9 @@ type Config struct {
 }
 
 type Enigma struct {
-	plugboard *ecore.Plugboard
-	rc        *rotorsCore
-	reflector *ecore.Reflector
+	plugboard  *ecore.Plugboard
+	rotorBlock *ecore.RotorBlock
+	reflector  *ecore.Reflector
 }
 
 func New(c Config) (*Enigma, error) {
@@ -23,7 +23,7 @@ func New(c Config) (*Enigma, error) {
 		return nil, err
 	}
 
-	rc, err := newRotorsCore(c.Rotors)
+	rotorBlock, err := newRotorBlock(c.Rotors)
 	if err != nil {
 		return nil, err
 	}
@@ -34,26 +34,26 @@ func New(c Config) (*Enigma, error) {
 	}
 
 	e := &Enigma{
-		plugboard: plugboard,
-		rc:        rc,
-		reflector: reflector,
+		plugboard:  plugboard,
+		rotorBlock: rotorBlock,
+		reflector:  reflector,
 	}
 	return e, nil
 }
 
 func (e *Enigma) Reset() {
-	e.rc.reset()
+	e.rotorBlock.Reset()
 }
 
 func (e *Enigma) feed(index int) int {
 
-	e.rc.rotate()
+	e.rotorBlock.Rotate()
 
-	index = e.plugboard.DoForward(index)
-	index = e.rc.doForward(index)
+	index = e.plugboard.Forward(index)
+	index = e.rotorBlock.Forward(index)
 	index = e.reflector.Do(index)
-	index = e.rc.doBackward(index)
-	index = e.plugboard.DoBackward(index)
+	index = e.rotorBlock.Backward(index)
+	index = e.plugboard.Backward(index)
 
 	return index
 }

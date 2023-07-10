@@ -15,9 +15,7 @@ import (
 
 // Electronic Codebook - ECB
 
-const (
-	blockSize = 8 // Block size in bytes.
-)
+const blockSize = 8 // Block size in bytes.
 
 const KeySize = 32 // Key size in bytes.
 

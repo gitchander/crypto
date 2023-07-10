@@ -4,14 +4,6 @@ import (
 	"fmt"
 )
 
-func errInvalidLetter(letter byte) error {
-	return fmt.Errorf("Invalid letter %#U", letter)
-}
-
-func errInvalidLetterByIndex(letter byte, index int) error {
-	return fmt.Errorf("Invalid letter %#U by index %d", letter, index)
-}
-
 func mod(a, b int) int {
 	m := a % b
 	if m < 0 {
@@ -29,8 +21,8 @@ func findDuplicate[T comparable](as []T) (T, bool) {
 			m[a] = struct{}{}
 		}
 	}
-	var zero T
-	return zero, false
+	var zeroValue T
+	return zeroValue, false
 }
 
 // mapping, wiring
@@ -43,10 +35,10 @@ func parseWiring(wiring string) (coupleTable, error) {
 	}
 
 	bs := []byte(wiring)
-	if len(bs) != positions {
+	if len(bs) != totalIndexes {
 		return ct, fmt.Errorf("wiring has invalid length %d", len(bs))
 	}
-	cs := make([]int, positions)
+	cs := make([]int, totalIndexes)
 	for i, b := range bs {
 		j, ok := letterToIndex(b)
 		if !ok {
@@ -66,4 +58,16 @@ func parseWiring(wiring string) (coupleTable, error) {
 		}
 	}
 	return ct, nil
+}
+
+func parseTurnovers(s string) ([]bool, error) {
+	tis, err := ParseIndexes(s)
+	if err != nil {
+		return nil, err
+	}
+	turnovers := make([]bool, totalIndexes)
+	for _, ti := range tis {
+		turnovers[ti] = true
+	}
+	return turnovers, nil
 }

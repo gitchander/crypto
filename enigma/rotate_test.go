@@ -18,11 +18,11 @@ func newEnigmaPos(e *Enigma) *enigmaPos {
 }
 
 func (e *enigmaPos) Rotate() {
-	e.e.rc.rotate()
+	e.e.rotorBlock.Rotate()
 }
 
 func (e *enigmaPos) Positions() string {
-	rotors := e.e.rc.rotors
+	rotors := e.e.rotorBlock.Rotors()
 	ls := make([]byte, len(rotors))
 	for i, r := range rotors {
 		letter, err := ecore.IndexToLetter(r.GetPosition())
@@ -36,7 +36,7 @@ func (e *enigmaPos) Positions() string {
 
 func (e *enigmaPos) SetPositions(s string) {
 	bs := []byte(s)
-	rotors := e.e.rc.rotors
+	rotors := e.e.rotorBlock.Rotors()
 	if len(bs) < len(rotors) {
 		err := fmt.Errorf("insufficient positions length: have %d, want %d",
 			len(bs), len(rotors))

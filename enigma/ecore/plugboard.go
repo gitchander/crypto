@@ -17,7 +17,7 @@ func NewPlugboard(s string) (*Plugboard, error) {
 	}
 
 	var ct coupleTable
-	for i := 0; i < positions; i++ {
+	for i := 0; i < totalIndexes; i++ {
 		ct.forwardTable[i] = i
 		ct.backwardTable[i] = i
 	}
@@ -30,7 +30,7 @@ func NewPlugboard(s string) (*Plugboard, error) {
 	vs := strings.Split(s, " ")
 	xs := make([]int, 2)
 	for _, pair := range vs {
-		err := parseLettersN(pair, xs)
+		err := parseIndexesN(pair, xs)
 		if err != nil {
 			return nil, fmt.Errorf("invalid plugboard letters: %s", err)
 		}
@@ -58,10 +58,10 @@ func NewPlugboard(s string) (*Plugboard, error) {
 	return &Plugboard{ct}, nil
 }
 
-func (p *Plugboard) DoForward(index int) int {
+func (p *Plugboard) Forward(index int) int {
 	return p.forwardTable[index]
 }
 
-func (p *Plugboard) DoBackward(index int) int {
+func (p *Plugboard) Backward(index int) int {
 	return p.backwardTable[index]
 }

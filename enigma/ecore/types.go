@@ -1,6 +1,8 @@
 package ecore
 
-type convertTable [positions]int
+const totalIndexes = 26
+
+type convertTable [totalIndexes]int
 
 // coupleTable - forward and backward table.
 
