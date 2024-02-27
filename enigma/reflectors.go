@@ -2,12 +2,20 @@ package enigma
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/gitchander/crypto/enigma/ecore"
 )
 
+// type safeReflectors struct {
+// 	guard sync.RWMutex
+// 	reflectors map[string]ecore.ReflectorConfig
+// }
+
+var guardReflectors sync.RWMutex
+
 // Historical reflectors:
-var historicalReflectors = map[string]ecore.ReflectorConfig{
+var globalReflectors = map[string]ecore.ReflectorConfig{
 	"A": ecore.ReflectorConfig{
 		Wiring: "EJMZALYXVBWFCRQUONTSPIKHGD",
 	},
@@ -25,10 +33,33 @@ var historicalReflectors = map[string]ecore.ReflectorConfig{
 	},
 }
 
-func reflectorByID(id string) (*ecore.Reflector, error) {
-	rc, ok := historicalReflectors[id]
+func RegisterReflector(reflectorID string, rc ecore.ReflectorConfig) {
+
+	guardReflectors.Lock()
+	defer guardReflectors.Unlock()
+
+	globalReflectors[reflectorID] = rc
+}
+
+func reflectorConfigByID(id string) (ecore.ReflectorConfig, error) {
+
+	guardReflectors.Lock()
+	defer guardReflectors.Unlock()
+
+	rc, ok := globalReflectors[id]
 	if !ok {
-		return nil, fmt.Errorf("invalid reflector id %q", id)
+		var zeroValue ecore.ReflectorConfig
+		return zeroValue, fmt.Errorf("invalid reflector id %q", id)
 	}
+	return rc, nil
+}
+
+func newReflectorByID(id string) (*ecore.Reflector, error) {
+
+	rc, err := reflectorConfigByID(id)
+	if err != nil {
+		return nil, err
+	}
+
 	return ecore.NewReflector(rc)
 }

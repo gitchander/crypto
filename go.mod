@@ -1,5 +1,7 @@
 module github.com/gitchander/crypto
 
-go 1.20
+go 1.21
 
-require golang.org/x/exp v0.0.0-20230626212559-97b1e661b5df
+toolchain go1.21.0
+
+require golang.org/x/exp v0.0.0-20240222234643-814bf88cf225

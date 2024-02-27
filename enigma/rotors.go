@@ -23,6 +23,7 @@ type syncRotors struct {
 
 func (p *syncRotors) RegisterRotor(rotorID string, rc ecore.RotorConfig) error {
 
+	// Check rotor config
 	_, err := ecore.NewRotor(rc)
 	if err != nil {
 		return err
@@ -50,10 +51,10 @@ func (p *syncRotors) RotorByID(rotorID string) (*ecore.Rotor, error) {
 
 //------------------------------------------------------------------------------
 
-var rotorsGuard sync.RWMutex
+var guardRotors sync.RWMutex
 
 // Historical rotors:
-var rotorsMap = map[string]ecore.RotorConfig{
+var globalRotors = map[string]ecore.RotorConfig{
 	"I": ecore.RotorConfig{
 		Wiring:    "EKMFLGDQVZNTOWYHXUSPAIBRCJ",
 		Turnovers: "Q",
@@ -97,23 +98,25 @@ var rotorsMap = map[string]ecore.RotorConfig{
 }
 
 func RegisterRotor(rotorID string, rc ecore.RotorConfig) {
-	rotorsGuard.Lock()
-	defer rotorsGuard.Unlock()
+	guardRotors.Lock()
+	defer guardRotors.Unlock()
 
-	rotorsMap[rotorID] = rc
+	globalRotors[rotorID] = rc
 }
 
 func rotorConfigByID(rotorID string) (ecore.RotorConfig, error) {
-	rotorsGuard.RLock()
-	defer rotorsGuard.RUnlock()
+	guardRotors.RLock()
+	defer guardRotors.RUnlock()
 
-	rc, ok := rotorsMap[rotorID]
+	rc, ok := globalRotors[rotorID]
 	if !ok {
 		var zeroValue ecore.RotorConfig
-		return zeroValue, fmt.Errorf("There is no rotor ID (%q)", rotorID)
+		return zeroValue, fmt.Errorf("There is no rotor by ID (%q)", rotorID)
 	}
 	return rc, nil
 }
+
+//------------------------------------------------------------------------------
 
 func parseRotorConfigs(s string) ([]ecore.RotorConfig, error) {
 	rotorIDs := strings.Split(s, " ")

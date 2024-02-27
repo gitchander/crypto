@@ -28,7 +28,7 @@ func New(c Config) (*Enigma, error) {
 		return nil, err
 	}
 
-	reflector, err := reflectorByID(c.Reflector)
+	reflector, err := newReflectorByID(c.Reflector)
 	if err != nil {
 		return nil, err
 	}
