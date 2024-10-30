@@ -32,7 +32,8 @@ func NewRotor(rc RotorConfig) (*Rotor, error) {
 }
 
 func (r *Rotor) rotate() {
-	r.position = (r.position + 1) % totalIndexes
+	// r.position = (r.position + 1) % totalIndexes
+	r.position = indexModules[(r.position + 1)]
 }
 
 func (r *Rotor) hasTurnover() bool {
@@ -63,24 +64,38 @@ func (r *Rotor) SetRing(ring int) error {
 	return errInvalidIndex(ring)
 }
 
+//------------------------------------------------------------------------------
+
 func (r *Rotor) doV1(index int, ct *convertTable) int {
-	index = mod((index - r.ring + r.position), totalIndexes)
+
+	k := r.position - r.ring
+
+	index = mod((index + k), totalIndexes)
 	index = ct[index]
-	index = mod((index + r.ring - r.position), totalIndexes)
+	index = mod((index - k), totalIndexes)
+
 	return index
 }
 
 func (r *Rotor) doV2(index int, ct *convertTable) int {
-	index = (index - r.ring + r.position + totalIndexes) % totalIndexes
+
+	k := r.position - r.ring
+
+	index = (index + k + totalIndexes) % totalIndexes
 	index = ct[index]
-	index = (index + r.ring - r.position + totalIndexes) % totalIndexes
+	index = (index - k + totalIndexes) % totalIndexes
+
 	return index
 }
 
 func (r *Rotor) doV3(index int, ct *convertTable) int {
-	index = indexModules[(index - r.ring + r.position + totalIndexes)]
+
+	k := r.position - r.ring
+
+	index = indexModules[(index + k + totalIndexes)]
 	index = ct[index]
-	index = indexModules[(index + r.ring - r.position + totalIndexes)]
+	index = indexModules[(index - k + totalIndexes)]
+
 	return index
 }
 
@@ -89,6 +104,8 @@ func (r *Rotor) doTable(index int, ct *convertTable) int {
 	//return r.doV2(index, ct)
 	return r.doV3(index, ct)
 }
+
+//------------------------------------------------------------------------------
 
 func (r *Rotor) Forward(index int) int {
 	return r.doTable(index, &(r.ct.forwardTable))

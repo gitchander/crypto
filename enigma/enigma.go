@@ -16,6 +16,8 @@ type Enigma struct {
 	reflector  *ecore.Reflector
 }
 
+var _ LetterFeeder = &Enigma{}
+
 func New(c Config) (*Enigma, error) {
 
 	plugboard, err := ecore.NewPlugboard(c.Plugboard)
@@ -41,10 +43,6 @@ func New(c Config) (*Enigma, error) {
 	return e, nil
 }
 
-func (e *Enigma) Reset() {
-	e.rotorBlock.Reset()
-}
-
 func (e *Enigma) feed(index int) int {
 
 	e.rotorBlock.Rotate()
@@ -58,31 +56,26 @@ func (e *Enigma) feed(index int) int {
 	return index
 }
 
-// Encode
+func (e *Enigma) Reset() {
+	e.rotorBlock.Reset()
+}
+
+// Encode / Decode
 // Encrypt / Decrypt
-func (e *Enigma) FeedLetter(letter byte) byte {
+
+func (e *Enigma) FeedLetter(letter byte) (byte, error) {
 
 	index, err := ecore.LetterToIndex(letter)
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 
 	index = e.feed(index)
+
 	outLetter, err := ecore.IndexToLetter(index)
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 
-	return outLetter
-}
-
-func (e *Enigma) FeedString(s string) string {
-	var (
-		as = []byte(s)
-		bs = make([]byte, len(as))
-	)
-	for i, a := range as {
-		bs[i] = e.FeedLetter(a)
-	}
-	return string(bs)
+	return outLetter, nil
 }

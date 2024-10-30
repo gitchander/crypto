@@ -8,7 +8,7 @@ import (
 )
 
 // one byte represent
-func runeSingleByte(r rune) (byte, bool) {
+func runeToSingleByte(r rune) (byte, bool) {
 	if uint32(r) < utf8.RuneSelf {
 		return byte(r), true
 	}
@@ -41,7 +41,7 @@ func OnlyLetters(s string) string {
 		bs = make([]byte, 0, len(rs))
 	)
 	for _, r := range rs {
-		b, ok := runeSingleByte(r)
+		b, ok := runeToSingleByte(r)
 		if ok {
 			index, err := ecore.LetterToIndex(b)
 			if err == nil {
@@ -57,4 +57,33 @@ func LinesToText(lines ...string) string {
 	s := JoinLines("", lines...)
 	s = OnlyLetters(s)
 	return strings.ToUpper(s)
+	//return s
+}
+
+func FormatText(text string) string {
+	const (
+		lettersPerGroup = 4
+		groupsPerLine   = 14
+	)
+	var b strings.Builder
+	var i int
+	for _, r := range text {
+		x, ok := runeToSingleByte(r)
+		if ok {
+			index, err := ecore.LetterToIndex(x)
+			if err == nil {
+				if i > 0 {
+					if (i % (groupsPerLine * lettersPerGroup)) == 0 {
+						b.WriteByte('\n')
+					} else if (i % lettersPerGroup) == 0 {
+						b.WriteByte(' ')
+					}
+				}
+				x, _ = ecore.IndexToLetter(index)
+				b.WriteByte(x)
+				i++
+			}
+		}
+	}
+	return b.String()
 }

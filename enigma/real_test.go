@@ -45,7 +45,11 @@ func TestDonitzMessage(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	plaintext := e.FeedString(tp.Ciphertext)
+	tf := IncludeForeign(e)
+	plaintext, err := tf.FeedText(tp.Ciphertext)
+	if err != nil {
+		t.Fatal(err)
+	}
 	if plaintext != tp.Plaintext {
 		t.Fatalf("wrong decrypt 'Dönitz message'")
 	}

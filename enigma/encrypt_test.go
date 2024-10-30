@@ -136,12 +136,17 @@ func TestSamples(t *testing.T) {
 	}
 
 	for i, sample := range samples {
+		e, err := New(sample.Config)
+		if err != nil {
+			t.Fatal(err)
+		}
+		//tf := TrueTextFeeder(e)
+		tf := IgnoreForeign(e)
 		for j, pair := range sample.Pairs {
-			e, err := New(sample.Config)
+			ciphertext, err := tf.FeedText(pair.Plaintext)
 			if err != nil {
 				t.Fatal(err)
 			}
-			ciphertext := TextWorker{}.FeedTextPanicForeign(e, pair.Plaintext)
 			if ciphertext != pair.Ciphertext {
 				t.Fatalf("(sample %d, pair %d) invalid ciphertext: have %q, want %q",
 					i, j, ciphertext, pair.Ciphertext)
@@ -175,12 +180,16 @@ func TestIncludeForeign(t *testing.T) {
 		},
 	}
 	for i, sample := range samples {
+		e, err := New(sample.Config)
+		if err != nil {
+			t.Fatal(err)
+		}
+		tf := IncludeForeign(e)
 		for j, pair := range sample.Pairs {
-			e, err := New(sample.Config)
+			ciphertext, err := tf.FeedText(pair.Plaintext)
 			if err != nil {
 				t.Fatal(err)
 			}
-			ciphertext := TextWorker{}.FeedTextIncludeForeign(e, pair.Plaintext)
 			if ciphertext != pair.Ciphertext {
 				t.Fatalf("(sample %d, pair %d) invalid ciphertext: have %q, want %q",
 					i, j, ciphertext, pair.Ciphertext)
@@ -204,22 +213,26 @@ func TestIgnoreForeign(t *testing.T) {
 			Pairs: []TestPair{
 				{
 					Plaintext:  "Hello, World!",
-					Ciphertext: "GKTWX GEGZQ",
+					Ciphertext: OnlyLetters("GKTWX GEGZQ"),
 				},
 				{
 					Plaintext:  "The Enigma cipher machine is well known for the vital role it played during WWII. Alan Turing and his attempts to crack the Enigma machine code changed history. Nevertheless, many messages could not be decrypted until today.",
-					Ciphertext: "XASFH VLAQA WTDIH WGLYC QTGOJ FIRRP SQCJP QKAUN PCYWM EAHOG GKBGK WWSZM VIXTW XMGKS GTFVJ YNJZY TBFBU HOUWQ UEFBI FNHEY UMUPH WEMJZ BYVKJ SWZRC QZYFJ ZNXMN AOFSU HNFDM XQVCH UHGQF MYEVE VEWCC JHIFB YXBZC IEICC HZEUU WEOL",
+					Ciphertext: OnlyLetters("XASFH VLAQA WTDIH WGLYC QTGOJ FIRRP SQCJP QKAUN PCYWM EAHOG GKBGK WWSZM VIXTW XMGKS GTFVJ YNJZY TBFBU HOUWQ UEFBI FNHEY UMUPH WEMJZ BYVKJ SWZRC QZYFJ ZNXMN AOFSU HNFDM XQVCH UHGQF MYEVE VEWCC JHIFB YXBZC IEICC HZEUU WEOL"),
 				},
 			},
 		},
 	}
 	for i, sample := range samples {
+		e, err := New(sample.Config)
+		if err != nil {
+			t.Fatal(err)
+		}
+		tf := IgnoreForeign(e)
 		for j, pair := range sample.Pairs {
-			e, err := New(sample.Config)
+			ciphertext, err := tf.FeedText(pair.Plaintext)
 			if err != nil {
 				t.Fatal(err)
 			}
-			ciphertext := TextWorker{}.FeedTextIgnoreForeign(e, pair.Plaintext)
 			if ciphertext != pair.Ciphertext {
 				t.Fatalf("(sample %d, pair %d) invalid ciphertext: have %q, want %q",
 					i, j, ciphertext, pair.Ciphertext)

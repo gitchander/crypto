@@ -62,8 +62,6 @@ func (p *RotorBlock) Rotors() []*Rotor {
 func (p *RotorBlock) Reset() {
 	for i, rotor := range p.rotors {
 		rotor.SetRing(p.rings[i])
-	}
-	for i, rotor := range p.rotors {
 		rotor.SetPosition(p.positions[i])
 	}
 }

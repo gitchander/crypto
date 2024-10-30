@@ -62,7 +62,7 @@ func TestSamples(t *testing.T) {
 		if !(bytes.Equal(as, bs)) {
 			t.Logf("%s: [%x]", "as", as)
 			t.Logf("%s: [%x]", "bs", bs)
-			t.Fatal("samples is not equal")
+			t.Fatal("samples are not equal")
 		}
 	}
 }
@@ -94,7 +94,7 @@ func TestRandom(t *testing.T) {
 		if !(bytes.Equal(as, bs)) {
 			t.Logf("%s: [%x]", "as", as)
 			t.Logf("%s: [%x]", "bs", bs)
-			t.Fatal("samples is not equal")
+			t.Fatal("samples are not equal")
 		}
 	}
 }
@@ -121,7 +121,7 @@ func TestStringRandom(t *testing.T) {
 		if !(bytes.Equal(as, bs)) {
 			t.Logf("%s: [%x]", "as", as)
 			t.Logf("%s: [%x]", "bs", bs)
-			t.Fatal("samples is not equal")
+			t.Fatal("samples are not equal")
 		}
 	}
 }
@@ -159,7 +159,7 @@ func TestRandomOutput(t *testing.T) {
 			t.Logf("%s: %s", "es", es)
 			t.Logf("%s: [%x]", "as", as)
 			t.Logf("%s: %s", "bs", bs)
-			t.Fatal("samples is not equal")
+			t.Fatal("samples are not equal")
 		}
 	}
 }
