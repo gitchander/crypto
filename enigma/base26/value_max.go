@@ -13,6 +13,8 @@ func testBase26Values() {
 	fmt.Println(0) // 0_0000
 	fmt.Println(1) // 0_0001
 	fmt.Println(2) // 0_0010
+	fmt.Println(3) // 0_0011
+	// ...
 	fmt.Println(8) // 0_1000
 	fmt.Println(9) // 0_1001
 
@@ -28,6 +30,8 @@ func testBase26Values() {
 	fmt.Println((1 << 4) + 0) // 1_0000: 16
 	fmt.Println((1 << 4) + 1) // 1_0001: 17
 	fmt.Println((1 << 4) + 2) // 1_0010: 18
+	fmt.Println((1 << 4) + 3) // 1_0011: 19
+	// ...
 	fmt.Println((1 << 4) + 8) // 1_1000: 24
 	fmt.Println((1 << 4) + 9) // 1_1001: 25
 }

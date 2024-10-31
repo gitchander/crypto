@@ -59,31 +59,3 @@ func LinesToText(lines ...string) string {
 	return strings.ToUpper(s)
 	//return s
 }
-
-func FormatText(text string) string {
-	const (
-		lettersPerGroup = 4
-		groupsPerLine   = 14
-	)
-	var b strings.Builder
-	var i int
-	for _, r := range text {
-		x, ok := runeToSingleByte(r)
-		if ok {
-			index, err := ecore.LetterToIndex(x)
-			if err == nil {
-				if i > 0 {
-					if (i % (groupsPerLine * lettersPerGroup)) == 0 {
-						b.WriteByte('\n')
-					} else if (i % lettersPerGroup) == 0 {
-						b.WriteByte(' ')
-					}
-				}
-				x, _ = ecore.IndexToLetter(index)
-				b.WriteByte(x)
-				i++
-			}
-		}
-	}
-	return b.String()
-}

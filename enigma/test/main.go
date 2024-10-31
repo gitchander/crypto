@@ -27,6 +27,7 @@ func main() {
 		testUtf8Base16,
 		testUtf8Base26,
 		testAnyBytes,
+		testAnyBytes2,
 		testFormatText,
 	}
 
@@ -389,6 +390,51 @@ func testAnyBytes() error {
 	return nil
 }
 
+func testAnyBytes2() error {
+
+	config := enigma.Config{
+		Plugboard: "BQ CR DI EJ KW MT OS PX UZ GH",
+		Rotors: enigma.RotorsConfig{
+			IDs:       "I II III",
+			Rings:     "AAA",
+			Positions: "AAA",
+		},
+		Reflector: "A",
+	}
+	e, err := enigma.New(config)
+	if err != nil {
+		return err
+	}
+	c := enigma.NewBytesCrypt(e)
+
+	r := random.NewRandNow()
+	data := make([]byte, r.Intn(1024))
+	for i := 0; i < 1000; i++ {
+		plainData1 := data[:r.Intn(len(data)+1)]
+		random.FillBytes(r, plainData1)
+
+		cipherData, err := c.Encrypt(plainData1)
+		if err != nil {
+			return err
+		}
+
+		//fmt.Printf("cipherData: %s\n", cipherData)
+
+		plainData2, err := c.Decrypt(cipherData)
+		if err != nil {
+			return err
+		}
+
+		if !(bytes.Equal(plainData1, plainData2)) {
+			err := fmt.Errorf("[%x] != [%x]\n", plainData1, plainData2)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
 func testFormatText() error {
 
 	text := `
@@ -405,7 +451,7 @@ func testFormatText() error {
 
 	fmt.Println(text)
 
-	ft := enigma.FormatText(text)
+	ft := enigma.DefaultTextFormatter.FormatText(text)
 	fmt.Println(ft)
 
 	return nil
