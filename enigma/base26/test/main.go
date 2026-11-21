@@ -9,9 +9,9 @@ import (
 )
 
 func main() {
-	testEncode()
+	//testEncode()
 	//testDecode()
-	//testEncodeHex()
+	testEncodeHex()
 }
 
 func checkError(err error) {

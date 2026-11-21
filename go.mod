@@ -1,6 +1,6 @@
 module github.com/gitchander/crypto
 
-go 1.23
+go 1.27
 
 toolchain go1.23.1
 

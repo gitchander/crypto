@@ -38,7 +38,7 @@ func Encode(dst, src []byte) int {
 
 			v := int(ba & mask4bit) // 4 bits
 
-			if v > mask4bitValueMax {
+			if v >= minValue4bits {
 				ba >>= 4
 				bn -= 4
 			} else {
@@ -79,7 +79,7 @@ func Decode(dst, src []byte) (int, error) {
 
 		v := int(x & mask4bit)
 
-		if v > mask4bitValueMax {
+		if v >= minValue4bits {
 			ba |= uint32(v) << bn
 			bn += 4
 		} else {
